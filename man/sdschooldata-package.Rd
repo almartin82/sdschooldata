@@ -6,7 +6,7 @@
 \alias{sdschooldata-package}
 \title{sdschooldata: Fetch and Process South Dakota School Data}
 \description{
-Downloads and processes school data from the South Dakota Department of Education (SD DOE). Provides functions for fetching enrollment data from Fall Census counts and transforming it into tidy format for analysis. Supports historical data from 2011 to present.
+Downloads and processes school data from the South Dakota Department of Education (SD DOE). Provides functions for fetching enrollment data from Fall Census counts and transforming it into tidy format for analysis. Supports historical data from 2006 to present.
 }
 \seealso{
 Useful links:

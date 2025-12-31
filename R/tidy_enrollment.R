@@ -142,7 +142,7 @@ tidy_enr <- function(df) {
 #' table(tidy_data$is_state, tidy_data$is_district, tidy_data$is_campus)
 #' }
 id_enr_aggs <- function(df) {
-  df %>%
+  result <- df %>%
     dplyr::mutate(
       # State level: Type == "State"
       is_state = type == "State",
@@ -151,11 +151,23 @@ id_enr_aggs <- function(df) {
       is_district = type == "District",
 
       # Campus level: Type == "Campus"
-      is_campus = type == "Campus",
-
-      # Public district detection - based on district_type_code
-      is_public = is.na(district_type_code) | district_type_code == "10"
+      is_campus = type == "Campus"
     )
+
+  # Public district detection - based on district_type_code
+  # Historical data (pre-2011) may not have district_type_code
+  if ("district_type_code" %in% names(df)) {
+    result <- result %>%
+      dplyr::mutate(
+        is_public = is.na(district_type_code) | district_type_code == "10"
+      )
+  } else {
+    # Assume all data is public when district_type_code not available
+    result <- result %>%
+      dplyr::mutate(is_public = TRUE)
+  }
+
+  result
 }
 
 

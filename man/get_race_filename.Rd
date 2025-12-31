@@ -10,7 +10,7 @@ get_race_filename(end_year)
 \item{end_year}{School year end}
 }
 \value{
-Filename string
+Filename string or NULL if not available
 }
 \description{
 Get race/ethnicity enrollment filename for a given year

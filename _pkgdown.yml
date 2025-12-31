@@ -45,6 +45,8 @@ home:
     href: https://doe.sd.gov/ofm/enrollment.aspx
   - text: Report a bug
     href: https://github.com/almartin82/sdschooldata/issues
+  - text: "Part of the 50 State Schooldata Family"
+    href: https://github.com/almartin82/njschooldata
 
 authors:
   Al Martin:

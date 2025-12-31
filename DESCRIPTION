@@ -6,7 +6,7 @@ Authors@R:
 Description: Downloads and processes school data from the South Dakota Department
     of Education (SD DOE). Provides functions for fetching enrollment data from
     Fall Census counts and transforming it into tidy format for analysis.
-    Supports historical data from 2011 to present.
+    Supports historical data from 2006 to present.
 License: MIT + file LICENSE
 Encoding: UTF-8
 Roxygen: list(markdown = TRUE)

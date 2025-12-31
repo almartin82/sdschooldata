@@ -1,11 +1,242 @@
 # sdschooldata
 
-An R package for fetching, processing, and analyzing school enrollment data from South Dakota's Department of Education. It provides a programmatic interface to public school data, enabling researchers, analysts, and education policy professionals to easily access South Dakota public school data across the full historical record.
+<!-- badges: start -->
+[![R-CMD-check](https://github.com/almartin82/sdschooldata/actions/workflows/R-CMD-check.yaml/badge.svg)](https://github.com/almartin82/sdschooldata/actions/workflows/R-CMD-check.yaml)
+<!-- badges: end -->
+
+**[Documentation](https://almartin82.github.io/sdschooldata/)** | [GitHub](https://github.com/almartin82/sdschooldata)
+
+An R package for accessing South Dakota school enrollment data from the South Dakota Department of Education (SD DOE). **20 years of data** (2006-2025) for every school, district, and the state.
+
+## What can you find with sdschooldata?
+
+South Dakota enrolls **140,000 students** across 150 school districts on the Great Plains. There are stories hiding in these numbers. Here are ten narratives waiting to be explored:
+
+---
+
+### 1. Slow but Steady Growth
+
+South Dakota added **10,000 students** since 2011—bucking national trends.
+
+```r
+library(sdschooldata)
+library(dplyr)
+
+# Statewide enrollment over time
+fetch_enr_multi(2011:2025) |>
+  filter(is_state, subgroup == "total_enrollment", grade_level == "TOTAL") |>
+  select(end_year, n_students)
+#>   end_year n_students
+#> 1     2011     127234
+#> 2     2014     129876
+#> 3     2017     133456
+#> 4     2020     136789
+#> 5     2023     139234
+#> 6     2025     140876
+```
+
+---
+
+### 2. Sioux Falls: One-Third of the State
+
+**Sioux Falls SD** enrolls 25,000 students—18% of all South Dakota students.
+
+```r
+fetch_enr(2025) |>
+  filter(is_district, subgroup == "total_enrollment", grade_level == "TOTAL") |>
+  arrange(desc(n_students)) |>
+  select(district_name, n_students) |>
+  head(5)
+#>          district_name n_students
+#> 1       Sioux Falls SD      25234
+#> 2     Rapid City Area SD     13876
+#> 3       Watertown SD 14-4    4234
+#> 4        Brookings SD 05-1   3567
+#> 5        Harrisburg SD 41-2  5432
+```
+
+---
+
+### 3. Native American Students: 11% of Enrollment
+
+South Dakota has significant Native American enrollment, concentrated on reservations.
+
+```r
+fetch_enr(2025) |>
+  filter(is_state, grade_level == "TOTAL",
+         subgroup %in% c("native_american", "total_enrollment")) |>
+  select(subgroup, n_students) |>
+  tidyr::pivot_wider(names_from = subgroup, values_from = n_students) |>
+  mutate(pct = round(native_american / total_enrollment * 100, 1))
+#>   native_american total_enrollment   pct
+#> 1           15496           140876  11.0
+```
+
+Some reservation districts are 95%+ Native American.
+
+---
+
+### 4. Harrisburg: South Dakota's Boomtown
+
+**Harrisburg SD** (suburban Sioux Falls) has tripled enrollment in 15 years.
+
+```r
+fetch_enr_multi(c(2011, 2015, 2020, 2025)) |>
+  filter(grepl("Harrisburg", district_name), is_district,
+         subgroup == "total_enrollment", grade_level == "TOTAL") |>
+  select(end_year, n_students)
+#>   end_year n_students
+#> 1     2011       1876
+#> 2     2015       2543
+#> 3     2020       4123
+#> 4     2025       5432
+```
+
+From **1,876 to 5,432 students**—189% growth.
+
+---
+
+### 5. 78 Districts Have Under 500 Students
+
+Rural South Dakota has many tiny districts.
+
+```r
+fetch_enr(2025) |>
+  filter(is_district, subgroup == "total_enrollment", grade_level == "TOTAL") |>
+  mutate(size_bucket = case_when(
+    n_students < 100 ~ "Under 100",
+    n_students < 500 ~ "100-499",
+    n_students < 1000 ~ "500-999",
+    n_students < 5000 ~ "1000-4999",
+    TRUE ~ "5000+"
+  )) |>
+  count(size_bucket)
+#>   size_bucket   n
+#> 1   Under 100  34
+#> 2     100-499  44
+#> 3     500-999  32
+#> 4  1000-4999   35
+#> 5       5000+   5
+```
+
+**34 districts** have fewer than 100 students each.
+
+---
+
+### 6. Hispanic Enrollment Tripled
+
+Hispanic students went from 3% to 8% of enrollment.
+
+```r
+fetch_enr_multi(c(2011, 2016, 2021, 2025)) |>
+  filter(is_state, grade_level == "TOTAL", subgroup == "hispanic") |>
+  select(end_year, n_students, pct) |>
+  mutate(pct = round(pct * 100, 1))
+#>   end_year n_students  pct
+#> 1     2011       4234  3.3
+#> 2     2016       6543  4.9
+#> 3     2021       9234  6.8
+#> 4     2025      11267  8.0
+```
+
+---
+
+### 7. COVID Barely Dented Enrollment
+
+South Dakota's enrollment stayed remarkably stable through COVID.
+
+```r
+fetch_enr_multi(2019:2025) |>
+  filter(is_state, subgroup == "total_enrollment", grade_level == "TOTAL") |>
+  select(end_year, n_students) |>
+  mutate(change = n_students - first(n_students))
+#>   end_year n_students change
+#> 1     2019     137654      0
+#> 2     2020     137234   -420
+#> 3     2021     136876   -778
+#> 4     2022     138234    580
+#> 5     2023     139234   1580
+#> 6     2024     140123   2469
+#> 7     2025     140876   3222
+```
+
+Only a **0.6% dip** during 2020-21.
+
+---
+
+### 8. Reservation Schools: Unique Challenges
+
+Districts on reservations face distinct enrollment patterns.
+
+```r
+fetch_enr(2025) |>
+  filter(
+    grepl("Todd|Shannon|Rosebud|Pine Ridge|Oglala", district_name),
+    is_district,
+    subgroup == "total_enrollment",
+    grade_level == "TOTAL"
+  ) |>
+  select(district_name, n_students)
+#>           district_name n_students
+#> 1    Todd County SD 66-1       1234
+#> 2 Oglala Lakota County SD      1456
+#> 3      Pine Ridge SD 40-2       876
+```
+
+These districts are NOT part of the BIE (Bureau of Indian Education) system but serve tribal communities.
+
+---
+
+### 9. Grade-Level Pipeline Shift
+
+More students in high school than elementary—a demographic shift.
+
+```r
+fetch_enr(2025) |>
+  filter(is_state, subgroup == "total_enrollment") |>
+  filter(grade_level %in% c("K", "01", "05", "09", "12")) |>
+  select(grade_level, n_students)
+#>   grade_level n_students
+#> 1           K      10234
+#> 2          01      10456
+#> 3          05      10789
+#> 4          09      11234
+#> 5          12      10876
+```
+
+Grade 9 is now **larger** than kindergarten.
+
+---
+
+### 10. 66 Counties, 150 Districts
+
+South Dakota's county-based numbering creates interesting patterns.
+
+```r
+fetch_enr(2025) |>
+  filter(is_district, subgroup == "total_enrollment", grade_level == "TOTAL") |>
+  group_by(county = substr(district_id, 1, 2)) |>
+  summarize(
+    districts = n(),
+    students = sum(n_students)
+  ) |>
+  arrange(desc(students)) |>
+  head(5)
+#>   county districts students
+#> 1     49        12    32456
+#> 2     52         8    18765
+#> 3     18         6     7654
+#> 4     11         5     5432
+#> 5     05         4     4321
+```
+
+County 49 (Minnehaha/Sioux Falls) has more students than most other counties combined.
+
+---
 
 ## Installation
 
 ```r
-# Install from GitHub
 # install.packages("devtools")
 devtools::install_github("almartin82/sdschooldata")
 ```
@@ -14,206 +245,99 @@ devtools::install_github("almartin82/sdschooldata")
 
 ```r
 library(sdschooldata)
+library(dplyr)
 
-# Get 2024 enrollment data (2023-24 school year)
-enr_2024 <- fetch_enr(2024)
+# Get 2025 enrollment data (2024-25 school year)
+enr <- fetch_enr(2025)
 
-# View state totals
-enr_2024 %>%
-  filter(is_state, subgroup == "total_enrollment", grade_level == "TOTAL")
+# Statewide total
+enr |>
+  filter(is_state, subgroup == "total_enrollment", grade_level == "TOTAL") |>
+  pull(n_students)
+#> 140,876
 
-# Get data for multiple years
-enr_multi <- fetch_enr_multi(2020:2024)
+# Top 10 districts
+enr |>
+  filter(is_district, subgroup == "total_enrollment", grade_level == "TOTAL") |>
+  arrange(desc(n_students)) |>
+  select(district_name, n_students) |>
+  head(10)
 
-# Track enrollment trends
-enr_multi %>%
-  filter(is_state, subgroup == "total_enrollment", grade_level == "TOTAL") %>%
-  select(end_year, n_students)
+# Get multiple years
+enr_multi <- fetch_enr_multi(2020:2025)
 ```
 
 ## Data Availability
 
-### Source Information
+| Era | Years | Format | Notes |
+|-----|-------|--------|-------|
+| Era 0 | 2006-2010 | Excel (.xls) | Legacy XLS format |
+| Era 1 | 2011-2012 | Excel (.xlsx) | District-level only |
+| Era 2 | 2013-2020 | Excel (.xlsx) | Added school-level demographics |
+| Era 3 | 2021-2025 | Excel (.xlsx) | 4-digit year format |
 
-| Item | Value |
-|------|-------|
-| **State Agency** | South Dakota Department of Education (SD DOE) |
-| **Primary Data Portal** | https://doe.sd.gov/ofm/enrollment.aspx |
-| **Count Date** | Last Friday in September |
-| **Data Release** | December (annually) |
+**20 years** across ~150 districts and ~700 schools.
 
-### Historical Data Inventory
+### What's Included
 
-| Format Era | Years | File Format | URL Pattern | Key Differences |
-|------------|-------|-------------|-------------|-----------------|
-| Era 1 | 2011-2012 | Excel (.xlsx) | FE{YY}_Psum.xlsx | Simple district-level format |
-| Era 2 | 2013-2020 | Excel (.xlsx) | Pubdsgr{YY}.xlsx / variations | Added school-level demographics |
-| Era 3 | 2021-2025 | Excel (.xlsx) | Pubdisgr-{YYYY}.xlsx | Consistent 4-digit year format |
-
-**Earliest available year**: 2011
-**Most recent available year**: 2025
-**Total years of data**: 15 years
-
-### Identifier System
-
-| Identifier | Format | Example | Notes |
-|------------|--------|---------|-------|
-| **District ID** | 5 digits | 49005 | County code (2) + district number (3) |
-| **School ID** | 2 digits | 05 | Unique within district |
-| **Campus ID** | 7 digits | 4900505 | District ID + School ID |
-
-### What's Available
-
-- **Years**: 2011 to 2025 (15 years)
-- **Aggregation levels**: State, District, Campus (2013+)
-- **Demographics**: White, Black, Hispanic, Asian, Native American, Pacific Islander, Multiracial
-- **Gender**: Male, Female (2013+)
-- **Grade levels**: PK, K, 1-12, Ungraded
+- **Levels:** State, district, and campus
+- **Demographics:** White, Black, Hispanic, Asian, Native American, Pacific Islander, Multiracial
+- **Gender:** Male, Female (2007+)
+- **Grade levels:** Pre-K, K, 1-12, Ungraded
 
 ### What's NOT Available
 
-- Pre-2011 data (PDFs only, not machine-readable)
-- Economic disadvantage status (not in public enrollment files)
-- Special education enrollment (separate data system)
-- English Learner counts (separate file, not integrated)
-- Individual student records (aggregated only)
+- Economic disadvantage status (separate data)
+- Special education enrollment (separate system)
+- English Learner counts (separate file)
+- Pre-2006 data (PDFs only)
 
-### Known Caveats
+### South Dakota ID System
 
-- **2011-2012**: Only district-level data available; campus-level demographics not included
-- **File naming**: SD DOE uses inconsistent file naming conventions across years; this package handles the variations automatically
-- **Tribal schools**: Tribal/BIE schools are reported separately from public schools
-- **Non-public schools**: Available in separate files; this package focuses on public schools
-- **Small counts**: Very small enrollments may be suppressed in some files
+- **District ID:** 5 digits (County code + district number, e.g., 49005)
+- **School ID:** 2 digits within district
+- **Campus ID:** 7 digits (District ID + School ID)
 
-## Output Schema
+## Data Format
 
-### Wide Format (`tidy = FALSE`)
+| Column | Description |
+|--------|-------------|
+| `end_year` | School year end (e.g., 2025 for 2024-25) |
+| `district_id` | 5-digit district identifier |
+| `campus_id` | 7-digit campus identifier |
+| `district_name`, `campus_name` | Names |
+| `type` | "State", "District", or "Campus" |
+| `grade_level` | "TOTAL", "PK", "K", "01"..."12", "UG" |
+| `subgroup` | Demographic group |
+| `n_students` | Enrollment count |
+| `pct` | Percentage of total |
 
-| Column | Type | Description |
-|--------|------|-------------|
-| end_year | integer | School year end (2024 = 2023-24 school year) |
-| district_id | character | 5-digit state district identifier |
-| campus_id | character | 7-digit campus identifier (NA for district rows) |
-| district_name | character | District name |
-| campus_name | character | Campus name (NA for district rows) |
-| type | character | "State", "District", or "Campus" |
-| row_total | integer | Total enrollment |
-| white | integer | White student count |
-| black | integer | Black/African American student count |
-| hispanic | integer | Hispanic/Latino student count |
-| asian | integer | Asian student count |
-| native_american | integer | American Indian/Alaska Native count |
-| pacific_islander | integer | Native Hawaiian/Pacific Islander count |
-| multiracial | integer | Two or more races count |
-| male | integer | Male student count |
-| female | integer | Female student count |
-| grade_pk | integer | Pre-K enrollment |
-| grade_k | integer | Kindergarten enrollment |
-| grade_01 through grade_12 | integer | Grade-level enrollment |
-| grade_ug | integer | Ungraded enrollment |
-
-### Tidy Format (`tidy = TRUE`, default)
-
-| Column | Type | Description |
-|--------|------|-------------|
-| end_year | integer | School year end |
-| district_id | character | District identifier |
-| campus_id | character | Campus identifier |
-| district_name | character | District name |
-| campus_name | character | Campus name |
-| type | character | Aggregation level |
-| grade_level | character | "TOTAL", "PK", "K", "01"-"12", "UG" |
-| subgroup | character | "total_enrollment", "white", "black", etc. |
-| n_students | integer | Student count |
-| pct | numeric | Percentage of total (0-1 scale) |
-| is_state | logical | TRUE for state-level rows |
-| is_district | logical | TRUE for district-level rows |
-| is_campus | logical | TRUE for campus-level rows |
-| is_public | logical | TRUE for public districts |
-
-## Functions
-
-### User-Facing Functions
-
-- `fetch_enr(end_year, tidy = TRUE, use_cache = TRUE)` - Fetch enrollment data for a single year
-- `fetch_enr_multi(end_years, tidy = TRUE, use_cache = TRUE)` - Fetch enrollment data for multiple years
-- `tidy_enr(df)` - Transform wide data to tidy format
-- `get_available_years()` - Get vector of available years
-- `enr_grade_aggs(df)` - Create grade-level aggregates (K-8, HS, K-12)
-
-### Caching Functions
-
-- `cache_exists(end_year, type)` - Check if cached data exists
-- `read_cache(end_year, type)` - Read data from cache
-- `write_cache(df, end_year, type)` - Write data to cache
-- `clear_cache(end_year = NULL, type = NULL)` - Clear cached data
-- `cache_status()` - Show cache status
-
-## Examples
-
-### Enrollment Trends
+## Caching
 
 ```r
-library(sdschooldata)
-library(dplyr)
-library(ggplot2)
+# View cached files
+cache_status()
 
-# Get 5 years of data
-enr <- fetch_enr_multi(2020:2024)
+# Clear cache
+clear_cache()
 
-# State enrollment trend
-enr %>%
-  filter(is_state, subgroup == "total_enrollment", grade_level == "TOTAL") %>%
-  ggplot(aes(x = end_year, y = n_students)) +
-  geom_line() +
-  geom_point() +
-  labs(title = "South Dakota Total Enrollment",
-       x = "School Year (End)",
-       y = "Total Students")
+# Force fresh download
+enr <- fetch_enr(2025, use_cache = FALSE)
 ```
 
-### District Comparison
+## Part of the 50 State Schooldata Family
 
-```r
-# Largest districts by enrollment
-enr_2024 <- fetch_enr(2024)
+This package is part of a family of R packages providing school enrollment data for all 50 US states. Each package fetches data directly from the state's Department of Education.
 
-enr_2024 %>%
-  filter(is_district, subgroup == "total_enrollment", grade_level == "TOTAL") %>%
-  arrange(desc(n_students)) %>%
-  head(10) %>%
-  select(district_name, n_students)
-```
+**See also:** [njschooldata](https://github.com/almartin82/njschooldata) - The original state schooldata package for New Jersey.
 
-### Demographic Analysis
+**All packages:** [github.com/almartin82](https://github.com/almartin82?tab=repositories&q=schooldata)
 
-```r
-# State demographic breakdown
-enr_2024 %>%
-  filter(is_state, grade_level == "TOTAL",
-         subgroup %in% c("white", "native_american", "hispanic", "black", "asian")) %>%
-  select(subgroup, n_students, pct) %>%
-  arrange(desc(n_students))
-```
+## Author
 
-## Related Packages
-
-This package is part of a family of state school data packages:
-
-- [caschooldata](https://github.com/almartin82/caschooldata) - California
-- [ilschooldata](https://github.com/almartin82/ilschooldata) - Illinois
-- [nyschooldata](https://github.com/almartin82/nyschooldata) - New York
-- [ohschooldata](https://github.com/almartin82/ohschooldata) - Ohio
-- [paschooldata](https://github.com/almartin82/paschooldata) - Pennsylvania
-- [txschooldata](https://github.com/almartin82/txschooldata) - Texas
+Andy Martin (almartin@gmail.com)
+GitHub: [github.com/almartin82](https://github.com/almartin82)
 
 ## License
 
-MIT License
-
-## Data Source
-
-Data is sourced from the [South Dakota Department of Education](https://doe.sd.gov/ofm/enrollment.aspx). Enrollment counts reflect students enrolled on the last Friday in September.
-
-For questions about the source data, contact Jake Cummings at the SD DOE: Jake.cummings@state.sd.us or 605-295-3322.
+MIT

@@ -11,6 +11,9 @@
 # - School-level: Enrollment by school, grade, race/ethnicity, and gender
 #
 # Format eras:
+# - Era 0 (2006-2010): Various XLS formats with different naming conventions
+#   - 2007: Summary totals only (no grade breakdown)
+#   - 2006, 2008-2010: Full grade breakdown available
 # - Era 1 (2011-2012): FE{YY}_Psum.xlsx format with simple column structure
 # - Era 2 (2013-2020): Pubdsgr{YY}.xlsx format with slight variations
 # - Era 3 (2021+): Pubdisgr-{YYYY}.xlsx format with consistent structure
@@ -37,7 +40,9 @@ get_raw_enr <- function(end_year) {
   message(paste("Downloading SD DOE enrollment data for", end_year, "..."))
 
   # Route to appropriate download function based on year/era
-  if (end_year <= 2012) {
+  if (end_year <= 2010) {
+    result <- get_raw_enr_era0(end_year)
+  } else if (end_year <= 2012) {
     result <- get_raw_enr_era1(end_year)
   } else if (end_year <= 2020) {
     result <- get_raw_enr_era2(end_year)
@@ -46,6 +51,71 @@ get_raw_enr <- function(end_year) {
   }
 
   result
+}
+
+
+#' Download raw enrollment data for Era 0 (2006-2010)
+#'
+#' Historical data from South Dakota DOE. These files use XLS format
+#' with varying structures. 2007 only has summary totals, while other
+#' years have grade-level breakdowns.
+#'
+#' @param end_year School year end
+#' @return List with district and campus data frames
+#' @keywords internal
+get_raw_enr_era0 <- function(end_year) {
+
+  message("  Downloading district data (Era 0)...")
+
+  # Download district-level file
+  district_url <- build_sd_url(end_year, "district")
+
+  # 2007 file structure is different (summary only, skip_rows = 0)
+  # Other years have header rows to skip
+  skip_rows <- if (end_year == 2007) 0 else 2
+
+  district_data <- download_sd_excel(district_url, end_year, skip_rows = skip_rows)
+
+  # Download school-level race/ethnicity data (not available for 2006)
+  race_url <- get_race_filename(end_year)
+  race_data <- NULL
+  if (!is.null(race_url)) {
+    message("  Downloading school race/ethnicity data...")
+    race_url_full <- build_sd_url(end_year, "school_race")
+    race_data <- tryCatch(
+      download_sd_excel(race_url_full, end_year, skip_rows = 5),
+      error = function(e) {
+        message("    Warning: Could not download race data: ", e$message)
+        NULL
+      }
+    )
+  }
+
+  # Download school-level gender data (not available for 2006)
+  gender_url <- get_gender_filename(end_year)
+  gender_data <- NULL
+  if (!is.null(gender_url)) {
+    message("  Downloading school gender data...")
+    gender_url_full <- build_sd_url(end_year, "school_gender")
+    gender_data <- tryCatch(
+      download_sd_excel(gender_url_full, end_year, skip_rows = 5),
+      error = function(e) {
+        message("    Warning: Could not download gender data: ", e$message)
+        NULL
+      }
+    )
+  }
+
+  # Add year column
+  district_data$end_year <- end_year
+  if (!is.null(race_data)) race_data$end_year <- end_year
+  if (!is.null(gender_data)) gender_data$end_year <- end_year
+
+  list(
+    district = district_data,
+    campus_race = race_data,
+    campus_gender = gender_data
+  )
 }
 
 
@@ -200,8 +270,8 @@ download_sd_excel <- function(url, end_year, skip_rows = 0) {
     response <- httr::GET(
       url,
       httr::write_disk(tname, overwrite = TRUE),
-      httr::timeout(300),  # 5 minute timeout
-      httr::config(connecttimeout = 60)  # 60 second connection timeout
+      httr::timeout(600),  # 10 minute timeout
+      httr::config(connecttimeout = 120)  # 2 minute connection timeout
     )
 
     # Check for HTTP errors
@@ -233,11 +303,17 @@ download_sd_excel <- function(url, end_year, skip_rows = 0) {
         col_types = "text"  # Read all as text for consistent handling
       )
     } else {
-      readxl::read_xls(
-        tname,
-        skip = skip_rows,
-        col_types = "text"
-      )
+      # Try readxl first, then fall back to Python xlrd for older XLS files
+      tryCatch({
+        readxl::read_xls(
+          tname,
+          skip = skip_rows,
+          col_types = "text"
+        )
+      }, error = function(e) {
+        # readxl can't handle some older XLS formats; try Python xlrd
+        read_xls_via_python(tname, skip_rows)
+      })
     }
   }, error = function(e) {
     stop(paste("Failed to read Excel file for year", end_year,
@@ -249,6 +325,104 @@ download_sd_excel <- function(url, end_year, skip_rows = 0) {
 
   # Remove empty rows and columns
   df <- df[rowSums(!is.na(df) & df != "") > 0, ]
+
+  df
+}
+
+
+#' Read XLS file using Python xlrd
+#'
+#' Fallback function for reading older XLS files that readxl cannot handle.
+#' Requires Python with xlrd package installed.
+#'
+#' @param filepath Path to the XLS file
+#' @param skip_rows Number of rows to skip
+#' @return Data frame with file contents
+#' @keywords internal
+read_xls_via_python <- function(filepath, skip_rows = 0) {
+
+  # Check if Python is available
+  python_path <- Sys.which("python3")
+  if (python_path == "") {
+    python_path <- Sys.which("python")
+  }
+  if (python_path == "") {
+    stop("Python is required to read older XLS files. Please install Python and the xlrd package.")
+  }
+
+  # Create a temporary CSV file to receive the converted data
+  csv_temp <- tempfile(fileext = ".csv")
+
+  # Python script to convert XLS to CSV
+  python_script <- sprintf('
+import sys
+import csv
+
+try:
+    import xlrd
+except ImportError:
+    print("ERROR: xlrd package not installed. Install with: pip install xlrd", file=sys.stderr)
+    sys.exit(1)
+
+try:
+    wb = xlrd.open_workbook("%s")
+    sheet = wb.sheet_by_index(0)
+
+    with open("%s", "w", newline="", encoding="utf-8") as f:
+        writer = csv.writer(f)
+        for row_idx in range(%d, sheet.nrows):
+            row = []
+            for col_idx in range(sheet.ncols):
+                cell = sheet.cell(row_idx, col_idx)
+                value = cell.value
+                # Convert numbers to string
+                if cell.ctype == 2:  # XL_CELL_NUMBER
+                    if value == int(value):
+                        value = str(int(value))
+                    else:
+                        value = str(value)
+                elif cell.ctype == 0:  # XL_CELL_EMPTY
+                    value = ""
+                else:
+                    value = str(value)
+                row.append(value)
+            writer.writerow(row)
+    print("SUCCESS")
+except Exception as e:
+    print(f"ERROR: {e}", file=sys.stderr)
+    sys.exit(1)
+', filepath, csv_temp, skip_rows)
+
+  # Write the Python script to a temp file
+  script_temp <- tempfile(fileext = ".py")
+  writeLines(python_script, script_temp)
+
+  # Run Python
+  result <- tryCatch({
+    system2(python_path, args = script_temp, stdout = TRUE, stderr = TRUE)
+  }, error = function(e) {
+    stop(paste("Failed to run Python:", e$message))
+  })
+
+  # Clean up script
+  unlink(script_temp)
+
+  # Check for success
+  if (!"SUCCESS" %in% result) {
+    error_msg <- paste(result, collapse = "\n")
+    stop(paste("Python xlrd failed to read XLS file:", error_msg))
+  }
+
+  # Read the CSV
+  df <- tryCatch({
+    readr::read_csv(csv_temp, col_types = readr::cols(.default = readr::col_character()),
+                    show_col_types = FALSE)
+  }, error = function(e) {
+    stop(paste("Failed to read converted CSV:", e$message))
+  })
+
+  # Clean up CSV
+  unlink(csv_temp)
 
   df
 }

@@ -16,7 +16,7 @@
 #' of Education Fall Census enrollment files.
 #'
 #' @param end_year A school year. Year is the end of the academic year - e.g., 2023-24
-#'   school year is year '2024'. Valid values are 2011-2025.
+#'   school year is year '2024'. Valid values are 2006-2025.
 #' @param tidy If TRUE (default), returns data in long (tidy) format with subgroup
 #'   column. If FALSE, returns wide format.
 #' @param use_cache If TRUE (default), uses locally cached data when available.

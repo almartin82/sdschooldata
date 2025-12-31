@@ -8,7 +8,7 @@ fetch_enr(end_year, tidy = TRUE, use_cache = TRUE)
 }
 \arguments{
 \item{end_year}{A school year. Year is the end of the academic year - e.g., 2023-24
-school year is year '2024'. Valid values are 2011-2025.}
+school year is year '2024'. Valid values are 2006-2025.}
 
 \item{tidy}{If TRUE (default), returns data in long (tidy) format with subgroup
 column. If FALSE, returns wide format.}

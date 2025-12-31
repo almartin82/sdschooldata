@@ -57,9 +57,12 @@ safe_numeric <- function(x) {
 #' @examples
 #' get_available_years()
 get_available_years <- function() {
-  # SD DOE provides enrollment data from 2011-present in Excel format
- # Years 2000-2010 have inconsistent formats or are unavailable as Excel
-  2011:2025
+  # SD DOE provides enrollment data from 2006-present in Excel format
+  # Years 2009-2010: XLS format with full grade breakdown
+  # Years 2007-2008: XLS format with summary totals only
+  # Years 2006: XLS format with full grade breakdown
+  # Years 2000-2005: Only PDF files available (not supported)
+  2006:2025
 }
 
 
@@ -110,15 +113,29 @@ build_sd_url <- function(end_year, file_type = "district") {
 #' @return Filename string
 #' @keywords internal
 get_district_filename <- function(end_year) {
+
   yy <- sprintf("%02d", end_year %% 100)
   yyyy <- end_year
 
   # Handle naming convention changes
-  if (end_year == 2011) {
+  # Era 0: 2006-2010 (XLS format with various naming conventions)
+  if (end_year == 2006) {
+    return("2006_PublicPk-12.xls")
+  } else if (end_year == 2007) {
+    return("Public_pk-12_totals07.xls")
+  } else if (end_year == 2008) {
+    return("WEBPublicbydistrictPK-12.xls")
+  } else if (end_year == 2009) {
+    return("Public_district.xls")
+  } else if (end_year == 2010) {
+    return("FE10_Psum.xls")
+  } else if (end_year == 2011) {
+    # Era 1: 2011-2012 (XLSX format)
     return("FE11_Psum.xlsx")
   } else if (end_year == 2012) {
     return("FE12_Pscgr.xlsx")
   } else if (end_year >= 2013 && end_year <= 2016) {
+    # Era 2: 2013-2020
     return(paste0("Pubdsgr", yy, ".xlsx"))
   } else if (end_year == 2017) {
     return("Pubdsgr17b.xlsx")
@@ -129,6 +146,7 @@ get_district_filename <- function(end_year) {
   } else if (end_year == 2020) {
     return("Pubdisgr-20f.xlsx")
   } else if (end_year == 2021) {
+    # Era 3: 2021+
     return("Pubdisgr-2021.xlsx")
   } else if (end_year == 2022) {
     return("Pubdisgr-2022.xlsx")
@@ -137,7 +155,7 @@ get_district_filename <- function(end_year) {
   } else if (end_year >= 2024) {
     return(paste0("Pubdisgr-", yyyy, ".xlsx"))
   } else {
-    stop("Year ", end_year, " not supported. Available years: 2011-2025")
+    stop("Year ", end_year, " not supported. Available years: 2006-2025")
   }
 }
 
@@ -145,17 +163,30 @@ get_district_filename <- function(end_year) {
 #' Get race/ethnicity enrollment filename for a given year
 #'
 #' @param end_year School year end
-#' @return Filename string
+#' @return Filename string or NULL if not available
 #' @keywords internal
 get_race_filename <- function(end_year) {
   yy <- sprintf("%02d", end_year %% 100)
   yyyy <- end_year
 
-  if (end_year == 2011) {
+  # Era 0: 2006-2010 (XLS format, varies by year)
+  if (end_year == 2006) {
+    return(NULL)  # Only PDF available for 2006
+  } else if (end_year == 2007) {
+    return("Public_FE_Ethnicity07.xls")
+  } else if (end_year == 2008) {
+    return("WEBPublicbySchoolbyEthnicitybyGrade.xls")
+  } else if (end_year == 2009) {
+    return("Public_ethnicity.xls")
+  } else if (end_year == 2010) {
+    return("FE10_Peth.xls")
+  } else if (end_year == 2011) {
+    # Era 1: 2011-2012
     return("FE11_Pethnicity.xlsx")
   } else if (end_year == 2012) {
     return("FE12_Pethnicity.xlsx")
   } else if (end_year >= 2013 && end_year <= 2017) {
+    # Era 2: 2013-2020
     return(paste0("Pubscrce", yy, ".xlsx"))
   } else if (end_year == 2018) {
     return("Pschrce-18a.xlsx")  # Note: Different naming pattern
@@ -164,6 +195,7 @@ get_race_filename <- function(end_year) {
   } else if (end_year == 2020) {
     return("Pubschrce-20f.xlsx")
   } else if (end_year == 2021) {
+    # Era 3: 2021+
     return("Pschrce-21a.xlsx")    # Note: Different naming pattern
   } else if (end_year == 2022) {
     return("Pubschrce-2022.xlsx")
@@ -180,17 +212,30 @@ get_race_filename <- function(end_year) {
 #' Get gender enrollment filename for a given year
 #'
 #' @param end_year School year end
-#' @return Filename string
+#' @return Filename string or NULL if not available
 #' @keywords internal
 get_gender_filename <- function(end_year) {
   yy <- sprintf("%02d", end_year %% 100)
   yyyy <- end_year
 
-  if (end_year == 2011) {
+  # Era 0: 2006-2010 (XLS format, varies by year)
+  if (end_year == 2006) {
+    return(NULL)  # Only PDF available for 2006
+  } else if (end_year == 2007) {
+    return("Public_Gender_FE2007.xls")
+  } else if (end_year == 2008) {
+    return("WEBPublicbySchoolbyGenderbyGrade.xls")
+  } else if (end_year == 2009) {
+    return("Public_gender.xls")
+  } else if (end_year == 2010) {
+    return("FE10_Pgen.xls")
+  } else if (end_year == 2011) {
+    # Era 1: 2011-2012
     return("FE11_Pgender.xlsx")
   } else if (end_year == 2012) {
     return("FE12_Pgender.xlsx")
   } else if (end_year >= 2013 && end_year <= 2017) {
+    # Era 2: 2013-2020
     return(paste0("Pubscgen", yy, ".xlsx"))
   } else if (end_year == 2018) {
     return("Pubgen-18a.xlsx")    # Note: Different naming pattern
@@ -199,6 +244,7 @@ get_gender_filename <- function(end_year) {
   } else if (end_year == 2020) {
     return("Pubschgen-20f.xlsx")
   } else if (end_year == 2021) {
+    # Era 3: 2021+
     return("Pschgen-21.xlsx")     # Note: Different naming pattern
   } else if (end_year == 2022) {
     return("Pubschgen-22.xlsx")   # Note: Uses 2-digit year

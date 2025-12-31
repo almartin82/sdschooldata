@@ -36,22 +36,27 @@ test_that("safe_numeric trims whitespace", {
 
 test_that("get_available_years returns expected range", {
   years <- get_available_years()
+  expect_true(2006 %in% years)  # Earliest year with Excel data
   expect_true(2011 %in% years)
   expect_true(2025 %in% years)
-  expect_false(2010 %in% years)
-  expect_equal(years, 2011:2025)
+  expect_false(2005 %in% years)  # 2005 and earlier only have PDF
+  expect_equal(years, 2006:2025)
 })
 
 test_that("build_sd_url constructs valid district URLs", {
-  # Era 1
+  # Era 0 (2006-2010)
+  url_2010 <- build_sd_url(2010, "district")
+  expect_true(grepl("FE10_Psum\\.xls$", url_2010))
+
+  # Era 1 (2011-2012)
   url_2011 <- build_sd_url(2011, "district")
   expect_true(grepl("FE11_Psum\\.xlsx$", url_2011))
 
-  # Era 2
+  # Era 2 (2013-2020)
   url_2015 <- build_sd_url(2015, "district")
   expect_true(grepl("Pubdsgr15\\.xlsx$", url_2015))
 
-  # Era 3
+  # Era 3 (2021+)
   url_2025 <- build_sd_url(2025, "district")
   expect_true(grepl("Pubdisgr-2025\\.xlsx$", url_2025))
 })
@@ -61,7 +66,14 @@ test_that("build_sd_url errors on unknown file type", {
 })
 
 test_that("get_district_filename handles all format eras", {
-  # Era 1 (2011-2012)
+  # Era 0 (2006-2010) - XLS format
+  expect_equal(get_district_filename(2006), "2006_PublicPk-12.xls")
+  expect_equal(get_district_filename(2007), "Public_pk-12_totals07.xls")
+  expect_equal(get_district_filename(2008), "WEBPublicbydistrictPK-12.xls")
+  expect_equal(get_district_filename(2009), "Public_district.xls")
+  expect_equal(get_district_filename(2010), "FE10_Psum.xls")
+
+  # Era 1 (2011-2012) - XLSX format
   expect_equal(get_district_filename(2011), "FE11_Psum.xlsx")
   expect_equal(get_district_filename(2012), "FE12_Pscgr.xlsx")
 
@@ -80,7 +92,7 @@ test_that("get_district_filename handles all format eras", {
 })
 
 test_that("get_district_filename errors on unsupported years", {
-  expect_error(get_district_filename(2010), "not supported")
+  expect_error(get_district_filename(2005), "not supported")  # Only PDF available
   expect_error(get_district_filename(2000), "not supported")
 })
 

@@ -27,7 +27,7 @@ test_that("get_available_years returns valid range", {
   years <- get_available_years()
   expect_true(is.integer(years))
   expect_true(length(years) > 0)
-  expect_true(min(years) >= 2011)
+  expect_true(min(years) >= 2006)  # Extended to 2006
   expect_true(max(years) <= 2030)
 })
 

@@ -80,17 +80,18 @@ process_district_enr <- function(df, end_year) {
   )
 
   # District ID - clean to 5-digit format
-  district_id_col <- find_col(c("District No.", "District Number", "District Num", "DistrictNo"))
+  district_id_col <- find_col(c("District No.", "District Number", "District Num", "DistrictNo", "District #"))
   if (is.null(district_id_col)) {
-    # Try to find column containing "No" or "Number"
-    no_cols <- grep("No\\.|Number|Num$", cols, value = TRUE, ignore.case = TRUE)
+    # Try to find column containing "No", "Number", or "#"
+    no_cols <- grep("No\\.|Number|Num$|#", cols, value = TRUE, ignore.case = TRUE)
     if (length(no_cols) > 0) district_id_col <- no_cols[1]
   }
   # If still not found, check if first column contains numeric district IDs
   if (is.null(district_id_col) && length(cols) > 0) {
     first_col <- cols[1]
     first_vals <- df[[first_col]][1:min(5, nrow(df))]
-    if (all(grepl("^\\d+$", first_vals, na.rm = TRUE))) {
+    first_vals <- first_vals[!is.na(first_vals)]
+    if (length(first_vals) > 0 && all(grepl("^\\d+$", first_vals))) {
       district_id_col <- first_col
     }
   }
@@ -115,8 +116,9 @@ process_district_enr <- function(df, end_year) {
   if (is.null(district_name_col) && length(cols) > 1) {
     second_col <- cols[2]
     second_vals <- df[[second_col]][1:min(3, nrow(df))]
+    second_vals <- second_vals[!is.na(second_vals)]
     # District names typically contain letters and spaces
-    if (all(grepl("[A-Za-z]", second_vals, na.rm = TRUE))) {
+    if (length(second_vals) > 0 && all(grepl("[A-Za-z]", second_vals))) {
       district_name_col <- second_col
     }
   }
@@ -168,10 +170,10 @@ process_district_enr <- function(df, end_year) {
   # Total enrollment - look for TOTAL column
   total_col <- find_col(c("Total", "TOTAL", "TOTAL PK-12", "TOTAL KG-12", "Total PK-12"))
   if (is.null(total_col)) {
-    # Look for column containing "TOTAL"
-    total_col <- grep("TOTAL|Total$", cols, value = TRUE, ignore.case = FALSE)[1]
+    # Look for column containing "TOTAL" or "PK-12" (for older years like 2007)
+    total_col <- grep("TOTAL|Total$|PK-12$", cols, value = TRUE, ignore.case = FALSE)[1]
   }
-  if (!is.null(total_col)) {
+  if (!is.null(total_col) && !is.na(total_col)) {
     result$row_total <- safe_numeric(df[[total_col]])
   } else {
     # Calculate from grade columns
@@ -279,7 +281,12 @@ process_campus_enr <- function(race_df, gender_df, end_year) {
     }
 
     # Get total enrollment from Total column (sum across all races)
-    total_col <- find_col(c("Total", "TOTAL"))
+    total_col <- find_col(c("Total", "TOTAL", "TOTAL PK-12", "TOTAL KG-12"))
+    if (is.null(total_col)) {
+      # Try finding any column containing TOTAL
+      total_cols <- grep("TOTAL|Total", names(school_rows), value = TRUE)
+      if (length(total_cols) > 0) total_col <- total_cols[1]
+    }
     if (!is.null(total_col)) {
       row_data$row_total <- sum(safe_numeric(school_rows[[total_col]]), na.rm = TRUE)
     }
