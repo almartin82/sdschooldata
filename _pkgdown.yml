@@ -1,0 +1,51 @@
+url: https://almartin82.github.io/sdschooldata/
+
+template:
+  bootstrap: 5
+  bootswatch: flatly
+
+navbar:
+  structure:
+    left:  [intro, reference, articles]
+    right: [search, github]
+  components:
+    github:
+      icon: fab fa-github
+      href: https://github.com/almartin82/sdschooldata
+
+reference:
+- title: "Fetch Data"
+  desc: "Functions to download enrollment data"
+  contents:
+  - fetch_enr
+  - fetch_enr_multi
+  - get_available_years
+
+- title: "Transform Data"
+  desc: "Functions to transform and reshape data"
+  contents:
+  - tidy_enr
+  - id_enr_aggs
+  - enr_grade_aggs
+
+- title: "Caching"
+  desc: "Functions to manage cached data"
+  contents:
+  - cache_status
+  - clear_cache
+
+- title: "Utilities"
+  desc: "Helper functions"
+  contents:
+  - starts_with("%")
+
+home:
+  links:
+  - text: SD DOE Data Portal
+    href: https://doe.sd.gov/ofm/enrollment.aspx
+  - text: Report a bug
+    href: https://github.com/almartin82/sdschooldata/issues
+
+authors:
+  Al Martin:
+    href: https://github.com/almartin82

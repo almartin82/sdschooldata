@@ -1,0 +1,26 @@
+# R files
+.Rhistory
+.Rdata
+.httr-oauth
+.DS_Store
+*.Rproj.user
+
+# Package build files
+*.tar.gz
+*.Rcheck/
+
+# IDE
+.idea/
+*.swp
+*.swo
+
+# OS files
+.DS_Store
+Thumbs.db
+
+# pkgdown
+docs/
+
+# Vignette outputs
+/doc/
+/Meta/
