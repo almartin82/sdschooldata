@@ -2,11 +2,12 @@
 
 <!-- badges: start -->
 [![R-CMD-check](https://github.com/almartin82/sdschooldata/actions/workflows/R-CMD-check.yaml/badge.svg)](https://github.com/almartin82/sdschooldata/actions/workflows/R-CMD-check.yaml)
+[![Python Tests](https://github.com/almartin82/sdschooldata/actions/workflows/python-test.yaml/badge.svg)](https://github.com/almartin82/sdschooldata/actions/workflows/python-test.yaml)
 <!-- badges: end -->
 
 **[Documentation](https://almartin82.github.io/sdschooldata/)** | [GitHub](https://github.com/almartin82/sdschooldata)
 
-An R package for accessing South Dakota school enrollment data from the South Dakota Department of Education (SD DOE). **20 years of data** (2006-2025) for every school, district, and the state.
+Fetch and analyze South Dakota school enrollment data from [SDDOE](https://doe.sd.gov/ofm/enrollment.aspx) in R or Python. **20 years of data** (2006-2025) for every school, district, and the state.
 
 ## What can you find with sdschooldata?
 
@@ -243,6 +244,8 @@ devtools::install_github("almartin82/sdschooldata")
 
 ## Quick Start
 
+### R
+
 ```r
 library(sdschooldata)
 library(dplyr)
@@ -265,6 +268,28 @@ enr |>
 
 # Get multiple years
 enr_multi <- fetch_enr_multi(2020:2025)
+```
+
+### Python
+
+```python
+import pysdschooldata as sd
+
+# Fetch 2025 data (2024-25 school year)
+enr = sd.fetch_enr(2025)
+
+# Statewide total
+total = enr[(enr['is_state'] == True) & (enr['subgroup'] == 'total_enrollment') & (enr['grade_level'] == 'TOTAL')]['n_students'].sum()
+print(f"{total:,} students")
+#> 140,876 students
+
+# Get multiple years
+enr_multi = sd.fetch_enr_multi([2020, 2021, 2022, 2023, 2024, 2025])
+
+# Check available years
+years = sd.get_available_years()
+print(f"Data available: {years['min_year']}-{years['max_year']}")
+#> Data available: 2006-2025
 ```
 
 ## Data Availability
