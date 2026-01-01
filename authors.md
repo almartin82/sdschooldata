@@ -11,12 +11,12 @@ Source:
 
 Martin A (2026). *sdschooldata: Fetch and Process South Dakota School
 Data*. R package version 0.1.0,
-<https://github.com/almartin82/sdschooldata>.
+<https://almartin82.github.io/sdschooldata>.
 
     @Manual{,
       title = {sdschooldata: Fetch and Process South Dakota School Data},
       author = {Al Martin},
       year = {2026},
       note = {R package version 0.1.0},
-      url = {https://github.com/almartin82/sdschooldata},
+      url = {https://almartin82.github.io/sdschooldata},
     }
