@@ -8,6 +8,7 @@
 # Package build files
 *.tar.gz
 *.Rcheck/
+..Rcheck/
 
 # IDE
 .idea/
