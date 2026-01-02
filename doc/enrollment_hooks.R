@@ -1,13 +1,4 @@
----
-title: "10 Insights from South Dakota School Enrollment Data"
-output: rmarkdown::html_vignette
-vignette: >
-  %\VignetteIndexEntry{10 Insights from South Dakota School Enrollment Data}
-  %\VignetteEngine{knitr::rmarkdown}
-  %\VignetteEncoding{UTF-8}
----
-
-```{r setup, include=FALSE}
+## ----setup, include=FALSE-----------------------------------------------------
 knitr::opts_chunk$set(
   collapse = TRUE,
   comment = "#>",
@@ -16,26 +7,16 @@ knitr::opts_chunk$set(
   fig.width = 8,
   fig.height = 5
 )
-```
 
-```{r load-packages}
+## ----load-packages------------------------------------------------------------
 library(sdschooldata)
 library(dplyr)
 library(tidyr)
 library(ggplot2)
 
 theme_set(theme_minimal(base_size = 14))
-```
 
-This vignette explores South Dakota's public school enrollment data, surfacing key trends and demographic patterns across 20 years of data (2006-2025).
-
----
-
-## 1. South Dakota enrollment is slowly growing
-
-Unlike many states seeing post-pandemic declines, South Dakota's public school enrollment has been relatively stable with modest growth, reaching approximately 140,000 students.
-
-```{r statewide-trend}
+## ----statewide-trend----------------------------------------------------------
 enr <- fetch_enr_multi(c(2015:2020, 2022:2025))
 
 state_totals <- enr |>
@@ -45,9 +26,8 @@ state_totals <- enr |>
          pct_change = round(change / lag(n_students) * 100, 2))
 
 state_totals
-```
 
-```{r statewide-chart}
+## ----statewide-chart----------------------------------------------------------
 ggplot(state_totals, aes(x = end_year, y = n_students)) +
   geom_line(linewidth = 1.2, color = "#003087") +
   geom_point(size = 3, color = "#003087") +
@@ -59,15 +39,8 @@ ggplot(state_totals, aes(x = end_year, y = n_students)) +
     x = "School Year (ending)",
     y = "Total Enrollment"
   )
-```
 
----
-
-## 2. Sioux Falls dominates the state
-
-The Sioux Falls School District is by far the largest in the state, with more students than the next several districts combined. Rapid City is a distant second.
-
-```{r top-districts}
+## ----top-districts------------------------------------------------------------
 enr_2025 <- fetch_enr(2025)
 
 top_10 <- enr_2025 |>
@@ -77,9 +50,8 @@ top_10 <- enr_2025 |>
   select(district_name, n_students)
 
 top_10
-```
 
-```{r top-districts-chart}
+## ----top-districts-chart------------------------------------------------------
 top_10 |>
   mutate(district_name = forcats::fct_reorder(district_name, n_students)) |>
   ggplot(aes(x = n_students, y = district_name)) +
@@ -90,15 +62,8 @@ top_10 |>
     x = "Total Enrollment",
     y = NULL
   )
-```
 
----
-
-## 3. Native American students are a significant population
-
-South Dakota has one of the highest percentages of Native American students in the nation, reflecting the state's large reservation lands including Pine Ridge, Rosebud, and Standing Rock.
-
-```{r demographics}
+## ----demographics-------------------------------------------------------------
 demographics <- enr_2025 |>
   filter(is_state, grade_level == "TOTAL",
          subgroup %in% c("white", "native_american", "hispanic", "black", "asian", "multiracial")) |>
@@ -107,9 +72,8 @@ demographics <- enr_2025 |>
   arrange(desc(n_students))
 
 demographics
-```
 
-```{r demographics-chart}
+## ----demographics-chart-------------------------------------------------------
 demographics |>
   mutate(subgroup = forcats::fct_reorder(subgroup, n_students)) |>
   ggplot(aes(x = n_students, y = subgroup, fill = subgroup)) +
@@ -122,15 +86,8 @@ demographics |>
     x = "Number of Students",
     y = NULL
   )
-```
 
----
-
-## 4. Sioux Falls and Rapid City are growing
-
-The state's two major urban centers continue to grow while rural areas face challenges, reflecting broader urbanization trends.
-
-```{r urban-growth}
+## ----urban-growth-------------------------------------------------------------
 urban_growth <- enr |>
   filter(is_district, subgroup == "total_enrollment", grade_level == "TOTAL",
          grepl("Sioux Falls|Rapid City|Aberdeen|Brookings|Watertown", district_name)) |>
@@ -144,9 +101,8 @@ urban_growth <- enr |>
   arrange(desc(pct_change))
 
 urban_growth
-```
 
-```{r regional-chart}
+## ----regional-chart-----------------------------------------------------------
 enr |>
   filter(is_district, subgroup == "total_enrollment", grade_level == "TOTAL",
          grepl("Sioux Falls|Rapid City|Aberdeen|Brookings", district_name)) |>
@@ -161,15 +117,8 @@ enr |>
     y = "Enrollment",
     color = "District"
   )
-```
 
----
-
-## 5. Many tiny rural districts
-
-South Dakota has a large number of very small school districts, many with fewer than 200 students, reflecting the state's rural character and sparse population.
-
-```{r small-districts}
+## ----small-districts----------------------------------------------------------
 small <- enr_2025 |>
   filter(is_district, subgroup == "total_enrollment", grade_level == "TOTAL") |>
   filter(n_students < 200) |>
@@ -178,15 +127,8 @@ small <- enr_2025 |>
   select(district_name, n_students)
 
 small
-```
 
----
-
-## 6. Hispanic enrollment is rising
-
-While still a small percentage of total enrollment, Hispanic students are the fastest-growing demographic group in South Dakota schools.
-
-```{r hispanic-trend}
+## ----hispanic-trend-----------------------------------------------------------
 # Use years with reliable data (avoiding 2006, 2008, 2021 which have parsing issues)
 reliable_years <- c(2007, 2009:2020, 2022:2025)
 enr_full <- fetch_enr_multi(reliable_years)
@@ -198,9 +140,8 @@ hispanic_trend <- enr_full |>
   select(end_year, n_students, pct)
 
 hispanic_trend
-```
 
-```{r growth-chart}
+## ----growth-chart-------------------------------------------------------------
 ggplot(hispanic_trend, aes(x = end_year, y = pct)) +
   geom_line(linewidth = 1.2, color = "#2E8B57") +
   geom_point(size = 3, color = "#2E8B57") +
@@ -210,22 +151,4 @@ ggplot(hispanic_trend, aes(x = end_year, y = pct)) +
     x = "School Year",
     y = "Percent of Total Enrollment"
   )
-```
 
----
-
-## Summary
-
-South Dakota's school enrollment data reveals:
-
-- **Steady growth**: Unlike many states, South Dakota enrollment remains stable
-- **Urban concentration**: Sioux Falls and Rapid City dominate enrollment
-- **Native American presence**: Significant Native American student population
-- **Rural challenges**: Many very small districts across the state
-- **Demographic change**: Hispanic enrollment growing steadily
-
-These trends have implications for school funding, facility planning, and educational equity across the Mount Rushmore State.
-
----
-
-*Data sourced from the South Dakota Department of Education [Fall Census](https://doe.sd.gov/ofm/enrollment.aspx).*
