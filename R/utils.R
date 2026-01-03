@@ -50,7 +50,8 @@ get_available_years <- function() {
   # Years 2007-2008: XLS format with summary totals only
   # Years 2006: XLS format with full grade breakdown
   # Years 2000-2005: Only PDF files available (not supported)
-  2006:2024
+  # Data source: https://doe.sd.gov/ofm/enrollment.aspx
+  2006:2025
 }
 
 
@@ -134,8 +135,8 @@ get_district_filename <- function(end_year) {
   } else if (end_year == 2020) {
     return("Pubdisgr-20f.xlsx")
   } else if (end_year == 2021) {
-    # Era 3: 2021+
-    return("Pubdisgr-2021.xlsx")
+    # Era 3: 2021+ (Note: 2021 uses 2-digit year, 2022+ uses 4-digit)
+    return("Pubdisgr-21.xlsx")
   } else if (end_year == 2022) {
     return("Pubdisgr-2022.xlsx")
   } else if (end_year == 2023) {
@@ -143,7 +144,7 @@ get_district_filename <- function(end_year) {
   } else if (end_year >= 2024) {
     return(paste0("Pubdisgr-", yyyy, ".xlsx"))
   } else {
-    stop("Year ", end_year, " not supported. Available years: 2006-2024")
+    stop("Year ", end_year, " not supported. Available years: 2006-2025")
   }
 }
 

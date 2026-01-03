@@ -22,11 +22,12 @@ Imports:
     httr,
     rappdirs
 Suggests:
-    testthat (>= 3.0.0),
+    forcats,
+    ggplot2,
     knitr,
     rmarkdown,
-    ggplot2,
-    scales
+    scales,
+    testthat (>= 3.0.0)
 VignetteBuilder: knitr
 Config/testthat/edition: 3
 URL: https://almartin82.github.io/sdschooldata, https://github.com/almartin82/sdschooldata

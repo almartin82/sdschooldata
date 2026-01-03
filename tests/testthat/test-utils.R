@@ -85,8 +85,9 @@ test_that("get_district_filename handles all format eras", {
   expect_equal(get_district_filename(2019), "Pubdisgr-19.xlsx")
   expect_equal(get_district_filename(2020), "Pubdisgr-20f.xlsx")
 
-  # Era 3 (2021+)
-  expect_equal(get_district_filename(2021), "Pubdisgr-2021.xlsx")
+  # Era 3 (2021+) - Note: 2021 uses 2-digit year, 2022+ uses 4-digit
+  expect_equal(get_district_filename(2021), "Pubdisgr-21.xlsx")
+  expect_equal(get_district_filename(2022), "Pubdisgr-2022.xlsx")
   expect_equal(get_district_filename(2024), "Pubdisgr-2024.xlsx")
   expect_equal(get_district_filename(2025), "Pubdisgr-2025.xlsx")
 })
