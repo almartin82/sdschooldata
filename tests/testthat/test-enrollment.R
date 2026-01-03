@@ -181,10 +181,10 @@ test_that("fetch_enr_multi works for multiple years", {
   skip_if_offline()
 
   # Use years that are more likely to have consistent data
-  result <- fetch_enr_multi(c(2024, 2025), tidy = TRUE, use_cache = TRUE)
+  result <- fetch_enr_multi(c(2023, 2024), tidy = TRUE, use_cache = TRUE)
 
   expect_true(is.data.frame(result))
-  expect_true(all(c(2024, 2025) %in% result$end_year))
+  expect_true(all(c(2023, 2024) %in% result$end_year))
 
   # Check each year has state totals
   state_data <- result[result$is_state & result$subgroup == "total_enrollment" &
