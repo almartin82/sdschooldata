@@ -50,7 +50,7 @@ get_available_years <- function() {
   # Years 2007-2008: XLS format with summary totals only
   # Years 2006: XLS format with full grade breakdown
   # Years 2000-2005: Only PDF files available (not supported)
-  2006:2025
+  2006:2024
 }
 
 
@@ -74,7 +74,7 @@ build_sd_url <- function(end_year, file_type = "district") {
   # 2013-2017: Pubdsgr{YY}.xlsx (or variations like Pubdsgr17b.xlsx)
   # 2018: PSgrade-18a.xlsx
   # 2019-2020: Pubdisgr-{YY}.xlsx (or Pubdisgr-20f.xlsx)
-  # 2021-2025: Pubdisgr-{YYYY}.xlsx
+  # 2021-2024: Pubdisgr-{YYYY}.xlsx
 
   yy <- end_year %% 100  # Two-digit year
   yyyy <- end_year       # Four-digit year
@@ -143,7 +143,7 @@ get_district_filename <- function(end_year) {
   } else if (end_year >= 2024) {
     return(paste0("Pubdisgr-", yyyy, ".xlsx"))
   } else {
-    stop("Year ", end_year, " not supported. Available years: 2006-2025")
+    stop("Year ", end_year, " not supported. Available years: 2006-2024")
   }
 }
 
