@@ -16,8 +16,6 @@ Imports:
     readxl,
     readr,
     purrr,
-    stringr,
-    tidyr,
     rlang,
     httr,
     rappdirs
@@ -27,7 +25,8 @@ Suggests:
     knitr,
     rmarkdown,
     scales,
-    testthat (>= 3.0.0)
+    testthat (>= 3.0.0),
+    tidyr
 VignetteBuilder: knitr
 Config/testthat/edition: 3
 URL: https://almartin82.github.io/sdschooldata, https://github.com/almartin82/sdschooldata

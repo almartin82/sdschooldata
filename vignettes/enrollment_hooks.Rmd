@@ -14,9 +14,12 @@ knitr::opts_chunk$set(
   message = FALSE,
   warning = FALSE,
   fig.width = 8,
-  fig.height = 5
+  fig.height = 5,
+  eval = FALSE
 )
 ```
+
+**Note:** This vignette demonstrates how to analyze South Dakota enrollment data. Code chunks are not evaluated during package build; run interactively to see results.
 
 ```{r load-packages}
 library(sdschooldata)
