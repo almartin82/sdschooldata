@@ -357,17 +357,11 @@ clear_cache()
 enr <- fetch_enr(2025, use_cache = FALSE)
 ```
 
-## Enrollment Visualizations
-
-![South Dakota statewide enrollment
-trends](https://almartin82.github.io/sdschooldata/articles/enrollment_hooks_files/figure-html/statewide-chart-1.png)
-
-![Top South Dakota
-districts](https://almartin82.github.io/sdschooldata/articles/enrollment_hooks_files/figure-html/top-districts-chart-1.png)
+## Learn More
 
 See the [full
 vignette](https://almartin82.github.io/sdschooldata/articles/enrollment_hooks.html)
-for more insights.
+for more insights and analysis of South Dakota enrollment trends.
 
 ## Part of the State Schooldata Project
 
