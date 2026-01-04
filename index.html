@@ -32,6 +32,12 @@
     <div id="navbar" class="collapse navbar-collapse ms-3">
       <ul class="navbar-nav me-auto">
 <li class="nav-item"><a class="nav-link" href="reference/index.html">Reference</a></li>
+<li class="nav-item dropdown">
+  <button class="nav-link dropdown-toggle" type="button" id="dropdown-articles" data-bs-toggle="dropdown" aria-expanded="false" aria-haspopup="true">Articles</button>
+  <ul class="dropdown-menu" aria-labelledby="dropdown-articles">
+<li><a class="dropdown-item" href="articles/enrollment_hooks.html">10 Insights from South Dakota School Enrollment Data</a></li>
+  </ul>
+</li>
       </ul>
 <ul class="navbar-nav">
 <li class="nav-item"><form class="form-inline" role="search">
@@ -51,7 +57,7 @@
 <!-- badges: start -->
 
 <p><strong><a href="https://almartin82.github.io/sdschooldata/">Documentation</a></strong> | <a href="https://github.com/almartin82/sdschooldata" class="external-link">GitHub</a></p>
-<p>An R package for accessing South Dakota school enrollment data from the South Dakota Department of Education (SD DOE). <strong>20 years of data</strong> (2006-2025) for every school, district, and the state.</p>
+<p>Fetch and analyze South Dakota school enrollment data from <a href="https://doe.sd.gov/ofm/enrollment.aspx" class="external-link">SDDOE</a> in R or Python. <strong>20 years of data</strong> (2006-2025) for every school, district, and the state.</p>
 <div class="section level2">
 <h2 id="what-can-you-find-with-sdschooldata">What can you find with sdschooldata?<a class="anchor" aria-label="anchor" href="#what-can-you-find-with-sdschooldata"></a>
 </h2>
@@ -261,6 +267,9 @@
 <div class="section level2">
 <h2 id="quick-start">Quick Start<a class="anchor" aria-label="anchor" href="#quick-start"></a>
 </h2>
+<div class="section level3">
+<h3 id="r">R<a class="anchor" aria-label="anchor" href="#r"></a>
+</h3>
 <div class="sourceCode" id="cb12"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://almartin82.github.io/sdschooldata">sdschooldata</a></span><span class="op">)</span></span>
 <span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://dplyr.tidyverse.org" class="external-link">dplyr</a></span><span class="op">)</span></span>
@@ -283,6 +292,28 @@
 <span></span>
 <span><span class="co"># Get multiple years</span></span>
 <span><span class="va">enr_multi</span> <span class="op">&lt;-</span> <span class="fu"><a href="reference/fetch_enr_multi.html">fetch_enr_multi</a></span><span class="op">(</span><span class="fl">2020</span><span class="op">:</span><span class="fl">2025</span><span class="op">)</span></span></code></pre></div>
+</div>
+<div class="section level3">
+<h3 id="python">Python<a class="anchor" aria-label="anchor" href="#python"></a>
+</h3>
+<div class="sourceCode" id="cb13"><pre class="sourceCode python"><code class="sourceCode python"><span id="cb13-1"><a href="#cb13-1" tabindex="-1"></a><span class="im">import</span> pysdschooldata <span class="im">as</span> sd</span>
+<span id="cb13-2"><a href="#cb13-2" tabindex="-1"></a></span>
+<span id="cb13-3"><a href="#cb13-3" tabindex="-1"></a><span class="co"># Fetch 2025 data (2024-25 school year)</span></span>
+<span id="cb13-4"><a href="#cb13-4" tabindex="-1"></a>enr <span class="op">=</span> sd.fetch_enr(<span class="dv">2025</span>)</span>
+<span id="cb13-5"><a href="#cb13-5" tabindex="-1"></a></span>
+<span id="cb13-6"><a href="#cb13-6" tabindex="-1"></a><span class="co"># Statewide total</span></span>
+<span id="cb13-7"><a href="#cb13-7" tabindex="-1"></a>total <span class="op">=</span> enr[(enr[<span class="st">'is_state'</span>] <span class="op">==</span> <span class="va">True</span>) <span class="op">&amp;</span> (enr[<span class="st">'subgroup'</span>] <span class="op">==</span> <span class="st">'total_enrollment'</span>) <span class="op">&amp;</span> (enr[<span class="st">'grade_level'</span>] <span class="op">==</span> <span class="st">'TOTAL'</span>)][<span class="st">'n_students'</span>].<span class="bu">sum</span>()</span>
+<span id="cb13-8"><a href="#cb13-8" tabindex="-1"></a><span class="bu">print</span>(<span class="ss">f"</span><span class="sc">{</span>total<span class="sc">:,}</span><span class="ss"> students"</span>)</span>
+<span id="cb13-9"><a href="#cb13-9" tabindex="-1"></a><span class="co">#&gt; 140,876 students</span></span>
+<span id="cb13-10"><a href="#cb13-10" tabindex="-1"></a></span>
+<span id="cb13-11"><a href="#cb13-11" tabindex="-1"></a><span class="co"># Get multiple years</span></span>
+<span id="cb13-12"><a href="#cb13-12" tabindex="-1"></a>enr_multi <span class="op">=</span> sd.fetch_enr_multi([<span class="dv">2020</span>, <span class="dv">2021</span>, <span class="dv">2022</span>, <span class="dv">2023</span>, <span class="dv">2024</span>, <span class="dv">2025</span>])</span>
+<span id="cb13-13"><a href="#cb13-13" tabindex="-1"></a></span>
+<span id="cb13-14"><a href="#cb13-14" tabindex="-1"></a><span class="co"># Check available years</span></span>
+<span id="cb13-15"><a href="#cb13-15" tabindex="-1"></a>years <span class="op">=</span> sd.get_available_years()</span>
+<span id="cb13-16"><a href="#cb13-16" tabindex="-1"></a><span class="bu">print</span>(<span class="ss">f"Data available: </span><span class="sc">{</span>years[<span class="st">'min_year'</span>]<span class="sc">}</span><span class="ss">-</span><span class="sc">{</span>years[<span class="st">'max_year'</span>]<span class="sc">}</span><span class="ss">"</span>)</span>
+<span id="cb13-17"><a href="#cb13-17" tabindex="-1"></a><span class="co">#&gt; Data available: 2006-2025</span></span></code></pre></div>
+</div>
 </div>
 <div class="section level2">
 <h2 id="data-availability">Data Availability<a class="anchor" aria-label="anchor" href="#data-availability"></a>
@@ -412,7 +443,7 @@
 <div class="section level2">
 <h2 id="caching">Caching<a class="anchor" aria-label="anchor" href="#caching"></a>
 </h2>
-<div class="sourceCode" id="cb13"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb14"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># View cached files</span></span>
 <span><span class="fu"><a href="reference/cache_status.html">cache_status</a></span><span class="op">(</span><span class="op">)</span></span>
 <span></span>
@@ -423,11 +454,17 @@
 <span><span class="va">enr</span> <span class="op">&lt;-</span> <span class="fu"><a href="reference/fetch_enr.html">fetch_enr</a></span><span class="op">(</span><span class="fl">2025</span>, use_cache <span class="op">=</span> <span class="cn">FALSE</span><span class="op">)</span></span></code></pre></div>
 </div>
 <div class="section level2">
-<h2 id="part-of-the-50-state-schooldata-family">Part of the 50 State Schooldata Family<a class="anchor" aria-label="anchor" href="#part-of-the-50-state-schooldata-family"></a>
+<h2 id="enrollment-visualizations">Enrollment Visualizations<a class="anchor" aria-label="anchor" href="#enrollment-visualizations"></a>
 </h2>
-<p>This package is part of a family of R packages providing school enrollment data for all 50 US states. Each package fetches data directly from the state’s Department of Education.</p>
-<p><strong>See also:</strong> <a href="https://github.com/almartin82/njschooldata" class="external-link">njschooldata</a> - The original state schooldata package for New Jersey.</p>
-<p><strong>All packages:</strong> <a href="https://github.com/almartin82?tab=repositories&amp;q=schooldata" class="external-link">github.com/almartin82</a></p>
+<p><img src="https://almartin82.github.io/sdschooldata/articles/enrollment_hooks_files/figure-html/statewide-chart-1.png" alt="South Dakota statewide enrollment trends" width="600"></p>
+<p><img src="https://almartin82.github.io/sdschooldata/articles/enrollment_hooks_files/figure-html/top-districts-chart-1.png" alt="Top South Dakota districts" width="600"></p>
+<p>See the <a href="https://almartin82.github.io/sdschooldata/articles/enrollment_hooks.html">full vignette</a> for more insights.</p>
+</div>
+<div class="section level2">
+<h2 id="part-of-the-state-schooldata-project">Part of the State Schooldata Project<a class="anchor" aria-label="anchor" href="#part-of-the-state-schooldata-project"></a>
+</h2>
+<p>A simple, consistent interface for accessing state-published school data in Python and R.</p>
+<p><strong>All 50 state packages:</strong> <a href="https://github.com/almartin82?tab=repositories&amp;q=schooldata" class="external-link">github.com/almartin82</a></p>
 </div>
 <div class="section level2">
 <h2 id="author">Author<a class="anchor" aria-label="anchor" href="#author"></a>
@@ -479,6 +516,8 @@
 <h2 data-toc-skip>Dev status</h2>
 <ul class="list-unstyled">
 <li><a href="https://github.com/almartin82/sdschooldata/actions/workflows/R-CMD-check.yaml" class="external-link"><img src="https://github.com/almartin82/sdschooldata/actions/workflows/R-CMD-check.yaml/badge.svg" alt="R-CMD-check"></a></li>
+<li><a href="https://github.com/almartin82/sdschooldata/actions/workflows/python-test.yaml" class="external-link"><img src="https://github.com/almartin82/sdschooldata/actions/workflows/python-test.yaml/badge.svg" alt="Python Tests"></a></li>
+<li><a href="https://lifecycle.r-lib.org/articles/stages.html#experimental" class="external-link"><img src="https://img.shields.io/badge/lifecycle-experimental-orange.svg" alt="Lifecycle: experimental"></a></li>
 </ul>
 </div>
 

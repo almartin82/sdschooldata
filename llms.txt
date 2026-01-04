@@ -3,9 +3,9 @@
 **[Documentation](https://almartin82.github.io/sdschooldata/)** \|
 [GitHub](https://github.com/almartin82/sdschooldata)
 
-An R package for accessing South Dakota school enrollment data from the
-South Dakota Department of Education (SD DOE). **20 years of data**
-(2006-2025) for every school, district, and the state.
+Fetch and analyze South Dakota school enrollment data from
+[SDDOE](https://doe.sd.gov/ofm/enrollment.aspx) in R or Python. **20
+years of data** (2006-2025) for every school, district, and the state.
 
 ## What can you find with sdschooldata?
 
@@ -250,6 +250,8 @@ devtools::install_github("almartin82/sdschooldata")
 
 ## Quick Start
 
+### R
+
 ``` r
 library(sdschooldata)
 library(dplyr)
@@ -272,6 +274,28 @@ enr |>
 
 # Get multiple years
 enr_multi <- fetch_enr_multi(2020:2025)
+```
+
+### Python
+
+``` python
+import pysdschooldata as sd
+
+# Fetch 2025 data (2024-25 school year)
+enr = sd.fetch_enr(2025)
+
+# Statewide total
+total = enr[(enr['is_state'] == True) & (enr['subgroup'] == 'total_enrollment') & (enr['grade_level'] == 'TOTAL')]['n_students'].sum()
+print(f"{total:,} students")
+#> 140,876 students
+
+# Get multiple years
+enr_multi = sd.fetch_enr_multi([2020, 2021, 2022, 2023, 2024, 2025])
+
+# Check available years
+years = sd.get_available_years()
+print(f"Data available: {years['min_year']}-{years['max_year']}")
+#> Data available: 2006-2025
 ```
 
 ## Data Availability
@@ -333,17 +357,24 @@ clear_cache()
 enr <- fetch_enr(2025, use_cache = FALSE)
 ```
 
-## Part of the 50 State Schooldata Family
+## Enrollment Visualizations
 
-This package is part of a family of R packages providing school
-enrollment data for all 50 US states. Each package fetches data directly
-from the state’s Department of Education.
+![South Dakota statewide enrollment
+trends](https://almartin82.github.io/sdschooldata/articles/enrollment_hooks_files/figure-html/statewide-chart-1.png)
 
-**See also:**
-[njschooldata](https://github.com/almartin82/njschooldata) - The
-original state schooldata package for New Jersey.
+![Top South Dakota
+districts](https://almartin82.github.io/sdschooldata/articles/enrollment_hooks_files/figure-html/top-districts-chart-1.png)
 
-**All packages:**
+See the [full
+vignette](https://almartin82.github.io/sdschooldata/articles/enrollment_hooks.html)
+for more insights.
+
+## Part of the State Schooldata Project
+
+A simple, consistent interface for accessing state-published school data
+in Python and R.
+
+**All 50 state packages:**
 [github.com/almartin82](https://github.com/almartin82?tab=repositories&q=schooldata)
 
 ## Author
@@ -392,3 +423,9 @@ Functions to manage cached data
 
 Helper functions
 
+# Articles
+
+### All vignettes
+
+- [10 Insights from South Dakota School Enrollment
+  Data](https://almartin82.github.io/sdschooldata/articles/enrollment_hooks.md):

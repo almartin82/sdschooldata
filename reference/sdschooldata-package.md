@@ -1,13 +1,13 @@
-# sdschooldata: Fetch and Process South Dakota School Data
+# sdschooldata: South Dakota School Data
 
-Downloads and processes school data from the South Dakota Department of
-Education (SD DOE). Provides functions for fetching enrollment data from
-Fall Census counts and transforming it into tidy format for analysis.
-Supports historical data from 2006 to present.
+A simple, consistent interface for accessing South Dakota school data in
+Python and R.
 
 ## See also
 
 Useful links:
+
+- <https://almartin82.github.io/sdschooldata>
 
 - <https://github.com/almartin82/sdschooldata>
 
