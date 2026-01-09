@@ -35,7 +35,7 @@
 <li class="nav-item dropdown">
   <button class="nav-link dropdown-toggle" type="button" id="dropdown-articles" data-bs-toggle="dropdown" aria-expanded="false" aria-haspopup="true">Articles</button>
   <ul class="dropdown-menu" aria-labelledby="dropdown-articles">
-<li><a class="dropdown-item" href="articles/enrollment_hooks.html">10 Insights from South Dakota School Enrollment Data</a></li>
+<li><a class="dropdown-item" href="articles/enrollment_hooks.html">15 Insights from South Dakota School Enrollment Data</a></li>
   </ul>
 </li>
       </ul>
@@ -61,206 +61,14 @@
 <div class="section level2">
 <h2 id="what-can-you-find-with-sdschooldata">What can you find with sdschooldata?<a class="anchor" aria-label="anchor" href="#what-can-you-find-with-sdschooldata"></a>
 </h2>
-<p>South Dakota enrolls <strong>140,000 students</strong> across 150 school districts on the Great Plains. There are stories hiding in these numbers. Here are ten narratives waiting to be explored:</p>
+<p>South Dakota enrolls students across 150 school districts on the Great Plains. Explore enrollment trends, demographic patterns, and regional differences across 20 years of data (2006-2025).</p>
+<p>For detailed insights and examples, see the <a href="https://almartin82.github.io/sdschooldata/articles/enrollment_hooks.html">enrollment hooks vignette</a>.</p>
 <hr>
-<div class="section level3">
-<h3 id="id_1-slow-but-steady-growth">1. Slow but Steady Growth<a class="anchor" aria-label="anchor" href="#id_1-slow-but-steady-growth"></a>
-</h3>
-<p>South Dakota added <strong>10,000 students</strong> since 2011—bucking national trends.</p>
-<div class="sourceCode" id="cb1"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://almartin82.github.io/sdschooldata">sdschooldata</a></span><span class="op">)</span></span>
-<span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://dplyr.tidyverse.org" class="external-link">dplyr</a></span><span class="op">)</span></span>
-<span></span>
-<span><span class="co"># Statewide enrollment over time</span></span>
-<span><span class="fu"><a href="reference/fetch_enr_multi.html">fetch_enr_multi</a></span><span class="op">(</span><span class="fl">2011</span><span class="op">:</span><span class="fl">2025</span><span class="op">)</span> <span class="op">|&gt;</span></span>
-<span>  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/filter.html" class="external-link">filter</a></span><span class="op">(</span><span class="va">is_state</span>, <span class="va">subgroup</span> <span class="op">==</span> <span class="st">"total_enrollment"</span>, <span class="va">grade_level</span> <span class="op">==</span> <span class="st">"TOTAL"</span><span class="op">)</span> <span class="op">|&gt;</span></span>
-<span>  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/select.html" class="external-link">select</a></span><span class="op">(</span><span class="va">end_year</span>, <span class="va">n_students</span><span class="op">)</span></span>
-<span><span class="co">#&gt;   end_year n_students</span></span>
-<span><span class="co">#&gt; 1     2011     127234</span></span>
-<span><span class="co">#&gt; 2     2014     129876</span></span>
-<span><span class="co">#&gt; 3     2017     133456</span></span>
-<span><span class="co">#&gt; 4     2020     136789</span></span>
-<span><span class="co">#&gt; 5     2023     139234</span></span>
-<span><span class="co">#&gt; 6     2025     140876</span></span></code></pre></div>
-<hr>
-</div>
-<div class="section level3">
-<h3 id="id_2-sioux-falls-one-third-of-the-state">2. Sioux Falls: One-Third of the State<a class="anchor" aria-label="anchor" href="#id_2-sioux-falls-one-third-of-the-state"></a>
-</h3>
-<p><strong>Sioux Falls SD</strong> enrolls 25,000 students—18% of all South Dakota students.</p>
-<div class="sourceCode" id="cb2"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="fu"><a href="reference/fetch_enr.html">fetch_enr</a></span><span class="op">(</span><span class="fl">2025</span><span class="op">)</span> <span class="op">|&gt;</span></span>
-<span>  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/filter.html" class="external-link">filter</a></span><span class="op">(</span><span class="va">is_district</span>, <span class="va">subgroup</span> <span class="op">==</span> <span class="st">"total_enrollment"</span>, <span class="va">grade_level</span> <span class="op">==</span> <span class="st">"TOTAL"</span><span class="op">)</span> <span class="op">|&gt;</span></span>
-<span>  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/arrange.html" class="external-link">arrange</a></span><span class="op">(</span><span class="fu"><a href="https://dplyr.tidyverse.org/reference/desc.html" class="external-link">desc</a></span><span class="op">(</span><span class="va">n_students</span><span class="op">)</span><span class="op">)</span> <span class="op">|&gt;</span></span>
-<span>  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/select.html" class="external-link">select</a></span><span class="op">(</span><span class="va">district_name</span>, <span class="va">n_students</span><span class="op">)</span> <span class="op">|&gt;</span></span>
-<span>  <span class="fu"><a href="https://rdrr.io/r/utils/head.html" class="external-link">head</a></span><span class="op">(</span><span class="fl">5</span><span class="op">)</span></span>
-<span><span class="co">#&gt;          district_name n_students</span></span>
-<span><span class="co">#&gt; 1       Sioux Falls SD      25234</span></span>
-<span><span class="co">#&gt; 2     Rapid City Area SD     13876</span></span>
-<span><span class="co">#&gt; 3       Watertown SD 14-4    4234</span></span>
-<span><span class="co">#&gt; 4        Brookings SD 05-1   3567</span></span>
-<span><span class="co">#&gt; 5        Harrisburg SD 41-2  5432</span></span></code></pre></div>
-<hr>
-</div>
-<div class="section level3">
-<h3 id="id_3-native-american-students-11-of-enrollment">3. Native American Students: 11% of Enrollment<a class="anchor" aria-label="anchor" href="#id_3-native-american-students-11-of-enrollment"></a>
-</h3>
-<p>South Dakota has significant Native American enrollment, concentrated on reservations.</p>
-<div class="sourceCode" id="cb3"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="fu"><a href="reference/fetch_enr.html">fetch_enr</a></span><span class="op">(</span><span class="fl">2025</span><span class="op">)</span> <span class="op">|&gt;</span></span>
-<span>  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/filter.html" class="external-link">filter</a></span><span class="op">(</span><span class="va">is_state</span>, <span class="va">grade_level</span> <span class="op">==</span> <span class="st">"TOTAL"</span>,</span>
-<span>         <span class="va">subgroup</span> <span class="op"><a href="https://rdrr.io/r/base/match.html" class="external-link">%in%</a></span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"native_american"</span>, <span class="st">"total_enrollment"</span><span class="op">)</span><span class="op">)</span> <span class="op">|&gt;</span></span>
-<span>  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/select.html" class="external-link">select</a></span><span class="op">(</span><span class="va">subgroup</span>, <span class="va">n_students</span><span class="op">)</span> <span class="op">|&gt;</span></span>
-<span>  <span class="fu">tidyr</span><span class="fu">::</span><span class="fu"><a href="https://tidyr.tidyverse.org/reference/pivot_wider.html" class="external-link">pivot_wider</a></span><span class="op">(</span>names_from <span class="op">=</span> <span class="va">subgroup</span>, values_from <span class="op">=</span> <span class="va">n_students</span><span class="op">)</span> <span class="op">|&gt;</span></span>
-<span>  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/mutate.html" class="external-link">mutate</a></span><span class="op">(</span>pct <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/Round.html" class="external-link">round</a></span><span class="op">(</span><span class="va">native_american</span> <span class="op">/</span> <span class="va">total_enrollment</span> <span class="op">*</span> <span class="fl">100</span>, <span class="fl">1</span><span class="op">)</span><span class="op">)</span></span>
-<span><span class="co">#&gt;   native_american total_enrollment   pct</span></span>
-<span><span class="co">#&gt; 1           15496           140876  11.0</span></span></code></pre></div>
-<p>Some reservation districts are 95%+ Native American.</p>
-<hr>
-</div>
-<div class="section level3">
-<h3 id="id_4-harrisburg-south-dakotas-boomtown">4. Harrisburg: South Dakota’s Boomtown<a class="anchor" aria-label="anchor" href="#id_4-harrisburg-south-dakotas-boomtown"></a>
-</h3>
-<p><strong>Harrisburg SD</strong> (suburban Sioux Falls) has tripled enrollment in 15 years.</p>
-<div class="sourceCode" id="cb4"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="fu"><a href="reference/fetch_enr_multi.html">fetch_enr_multi</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">2011</span>, <span class="fl">2015</span>, <span class="fl">2020</span>, <span class="fl">2025</span><span class="op">)</span><span class="op">)</span> <span class="op">|&gt;</span></span>
-<span>  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/filter.html" class="external-link">filter</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/grep.html" class="external-link">grepl</a></span><span class="op">(</span><span class="st">"Harrisburg"</span>, <span class="va">district_name</span><span class="op">)</span>, <span class="va">is_district</span>,</span>
-<span>         <span class="va">subgroup</span> <span class="op">==</span> <span class="st">"total_enrollment"</span>, <span class="va">grade_level</span> <span class="op">==</span> <span class="st">"TOTAL"</span><span class="op">)</span> <span class="op">|&gt;</span></span>
-<span>  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/select.html" class="external-link">select</a></span><span class="op">(</span><span class="va">end_year</span>, <span class="va">n_students</span><span class="op">)</span></span>
-<span><span class="co">#&gt;   end_year n_students</span></span>
-<span><span class="co">#&gt; 1     2011       1876</span></span>
-<span><span class="co">#&gt; 2     2015       2543</span></span>
-<span><span class="co">#&gt; 3     2020       4123</span></span>
-<span><span class="co">#&gt; 4     2025       5432</span></span></code></pre></div>
-<p>From <strong>1,876 to 5,432 students</strong>—189% growth.</p>
-<hr>
-</div>
-<div class="section level3">
-<h3 id="id_5-78-districts-have-under-500-students">5. 78 Districts Have Under 500 Students<a class="anchor" aria-label="anchor" href="#id_5-78-districts-have-under-500-students"></a>
-</h3>
-<p>Rural South Dakota has many tiny districts.</p>
-<div class="sourceCode" id="cb5"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="fu"><a href="reference/fetch_enr.html">fetch_enr</a></span><span class="op">(</span><span class="fl">2025</span><span class="op">)</span> <span class="op">|&gt;</span></span>
-<span>  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/filter.html" class="external-link">filter</a></span><span class="op">(</span><span class="va">is_district</span>, <span class="va">subgroup</span> <span class="op">==</span> <span class="st">"total_enrollment"</span>, <span class="va">grade_level</span> <span class="op">==</span> <span class="st">"TOTAL"</span><span class="op">)</span> <span class="op">|&gt;</span></span>
-<span>  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/mutate.html" class="external-link">mutate</a></span><span class="op">(</span>size_bucket <span class="op">=</span> <span class="fu"><a href="https://dplyr.tidyverse.org/reference/case_when.html" class="external-link">case_when</a></span><span class="op">(</span></span>
-<span>    <span class="va">n_students</span> <span class="op">&lt;</span> <span class="fl">100</span> <span class="op">~</span> <span class="st">"Under 100"</span>,</span>
-<span>    <span class="va">n_students</span> <span class="op">&lt;</span> <span class="fl">500</span> <span class="op">~</span> <span class="st">"100-499"</span>,</span>
-<span>    <span class="va">n_students</span> <span class="op">&lt;</span> <span class="fl">1000</span> <span class="op">~</span> <span class="st">"500-999"</span>,</span>
-<span>    <span class="va">n_students</span> <span class="op">&lt;</span> <span class="fl">5000</span> <span class="op">~</span> <span class="st">"1000-4999"</span>,</span>
-<span>    <span class="cn">TRUE</span> <span class="op">~</span> <span class="st">"5000+"</span></span>
-<span>  <span class="op">)</span><span class="op">)</span> <span class="op">|&gt;</span></span>
-<span>  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/count.html" class="external-link">count</a></span><span class="op">(</span><span class="va">size_bucket</span><span class="op">)</span></span>
-<span><span class="co">#&gt;   size_bucket   n</span></span>
-<span><span class="co">#&gt; 1   Under 100  34</span></span>
-<span><span class="co">#&gt; 2     100-499  44</span></span>
-<span><span class="co">#&gt; 3     500-999  32</span></span>
-<span><span class="co">#&gt; 4  1000-4999   35</span></span>
-<span><span class="co">#&gt; 5       5000+   5</span></span></code></pre></div>
-<p><strong>34 districts</strong> have fewer than 100 students each.</p>
-<hr>
-</div>
-<div class="section level3">
-<h3 id="id_6-hispanic-enrollment-tripled">6. Hispanic Enrollment Tripled<a class="anchor" aria-label="anchor" href="#id_6-hispanic-enrollment-tripled"></a>
-</h3>
-<p>Hispanic students went from 3% to 8% of enrollment.</p>
-<div class="sourceCode" id="cb6"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="fu"><a href="reference/fetch_enr_multi.html">fetch_enr_multi</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">2011</span>, <span class="fl">2016</span>, <span class="fl">2021</span>, <span class="fl">2025</span><span class="op">)</span><span class="op">)</span> <span class="op">|&gt;</span></span>
-<span>  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/filter.html" class="external-link">filter</a></span><span class="op">(</span><span class="va">is_state</span>, <span class="va">grade_level</span> <span class="op">==</span> <span class="st">"TOTAL"</span>, <span class="va">subgroup</span> <span class="op">==</span> <span class="st">"hispanic"</span><span class="op">)</span> <span class="op">|&gt;</span></span>
-<span>  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/select.html" class="external-link">select</a></span><span class="op">(</span><span class="va">end_year</span>, <span class="va">n_students</span>, <span class="va">pct</span><span class="op">)</span> <span class="op">|&gt;</span></span>
-<span>  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/mutate.html" class="external-link">mutate</a></span><span class="op">(</span>pct <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/Round.html" class="external-link">round</a></span><span class="op">(</span><span class="va">pct</span> <span class="op">*</span> <span class="fl">100</span>, <span class="fl">1</span><span class="op">)</span><span class="op">)</span></span>
-<span><span class="co">#&gt;   end_year n_students  pct</span></span>
-<span><span class="co">#&gt; 1     2011       4234  3.3</span></span>
-<span><span class="co">#&gt; 2     2016       6543  4.9</span></span>
-<span><span class="co">#&gt; 3     2021       9234  6.8</span></span>
-<span><span class="co">#&gt; 4     2025      11267  8.0</span></span></code></pre></div>
-<hr>
-</div>
-<div class="section level3">
-<h3 id="id_7-covid-barely-dented-enrollment">7. COVID Barely Dented Enrollment<a class="anchor" aria-label="anchor" href="#id_7-covid-barely-dented-enrollment"></a>
-</h3>
-<p>South Dakota’s enrollment stayed remarkably stable through COVID.</p>
-<div class="sourceCode" id="cb7"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="fu"><a href="reference/fetch_enr_multi.html">fetch_enr_multi</a></span><span class="op">(</span><span class="fl">2019</span><span class="op">:</span><span class="fl">2025</span><span class="op">)</span> <span class="op">|&gt;</span></span>
-<span>  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/filter.html" class="external-link">filter</a></span><span class="op">(</span><span class="va">is_state</span>, <span class="va">subgroup</span> <span class="op">==</span> <span class="st">"total_enrollment"</span>, <span class="va">grade_level</span> <span class="op">==</span> <span class="st">"TOTAL"</span><span class="op">)</span> <span class="op">|&gt;</span></span>
-<span>  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/select.html" class="external-link">select</a></span><span class="op">(</span><span class="va">end_year</span>, <span class="va">n_students</span><span class="op">)</span> <span class="op">|&gt;</span></span>
-<span>  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/mutate.html" class="external-link">mutate</a></span><span class="op">(</span>change <span class="op">=</span> <span class="va">n_students</span> <span class="op">-</span> <span class="fu"><a href="https://dplyr.tidyverse.org/reference/nth.html" class="external-link">first</a></span><span class="op">(</span><span class="va">n_students</span><span class="op">)</span><span class="op">)</span></span>
-<span><span class="co">#&gt;   end_year n_students change</span></span>
-<span><span class="co">#&gt; 1     2019     137654      0</span></span>
-<span><span class="co">#&gt; 2     2020     137234   -420</span></span>
-<span><span class="co">#&gt; 3     2021     136876   -778</span></span>
-<span><span class="co">#&gt; 4     2022     138234    580</span></span>
-<span><span class="co">#&gt; 5     2023     139234   1580</span></span>
-<span><span class="co">#&gt; 6     2024     140123   2469</span></span>
-<span><span class="co">#&gt; 7     2025     140876   3222</span></span></code></pre></div>
-<p>Only a <strong>0.6% dip</strong> during 2020-21.</p>
-<hr>
-</div>
-<div class="section level3">
-<h3 id="id_8-reservation-schools-unique-challenges">8. Reservation Schools: Unique Challenges<a class="anchor" aria-label="anchor" href="#id_8-reservation-schools-unique-challenges"></a>
-</h3>
-<p>Districts on reservations face distinct enrollment patterns.</p>
-<div class="sourceCode" id="cb8"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="fu"><a href="reference/fetch_enr.html">fetch_enr</a></span><span class="op">(</span><span class="fl">2025</span><span class="op">)</span> <span class="op">|&gt;</span></span>
-<span>  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/filter.html" class="external-link">filter</a></span><span class="op">(</span></span>
-<span>    <span class="fu"><a href="https://rdrr.io/r/base/grep.html" class="external-link">grepl</a></span><span class="op">(</span><span class="st">"Todd|Shannon|Rosebud|Pine Ridge|Oglala"</span>, <span class="va">district_name</span><span class="op">)</span>,</span>
-<span>    <span class="va">is_district</span>,</span>
-<span>    <span class="va">subgroup</span> <span class="op">==</span> <span class="st">"total_enrollment"</span>,</span>
-<span>    <span class="va">grade_level</span> <span class="op">==</span> <span class="st">"TOTAL"</span></span>
-<span>  <span class="op">)</span> <span class="op">|&gt;</span></span>
-<span>  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/select.html" class="external-link">select</a></span><span class="op">(</span><span class="va">district_name</span>, <span class="va">n_students</span><span class="op">)</span></span>
-<span><span class="co">#&gt;           district_name n_students</span></span>
-<span><span class="co">#&gt; 1    Todd County SD 66-1       1234</span></span>
-<span><span class="co">#&gt; 2 Oglala Lakota County SD      1456</span></span>
-<span><span class="co">#&gt; 3      Pine Ridge SD 40-2       876</span></span></code></pre></div>
-<p>These districts are NOT part of the BIE (Bureau of Indian Education) system but serve tribal communities.</p>
-<hr>
-</div>
-<div class="section level3">
-<h3 id="id_9-grade-level-pipeline-shift">9. Grade-Level Pipeline Shift<a class="anchor" aria-label="anchor" href="#id_9-grade-level-pipeline-shift"></a>
-</h3>
-<p>More students in high school than elementary—a demographic shift.</p>
-<div class="sourceCode" id="cb9"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="fu"><a href="reference/fetch_enr.html">fetch_enr</a></span><span class="op">(</span><span class="fl">2025</span><span class="op">)</span> <span class="op">|&gt;</span></span>
-<span>  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/filter.html" class="external-link">filter</a></span><span class="op">(</span><span class="va">is_state</span>, <span class="va">subgroup</span> <span class="op">==</span> <span class="st">"total_enrollment"</span><span class="op">)</span> <span class="op">|&gt;</span></span>
-<span>  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/filter.html" class="external-link">filter</a></span><span class="op">(</span><span class="va">grade_level</span> <span class="op"><a href="https://rdrr.io/r/base/match.html" class="external-link">%in%</a></span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"K"</span>, <span class="st">"01"</span>, <span class="st">"05"</span>, <span class="st">"09"</span>, <span class="st">"12"</span><span class="op">)</span><span class="op">)</span> <span class="op">|&gt;</span></span>
-<span>  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/select.html" class="external-link">select</a></span><span class="op">(</span><span class="va">grade_level</span>, <span class="va">n_students</span><span class="op">)</span></span>
-<span><span class="co">#&gt;   grade_level n_students</span></span>
-<span><span class="co">#&gt; 1           K      10234</span></span>
-<span><span class="co">#&gt; 2          01      10456</span></span>
-<span><span class="co">#&gt; 3          05      10789</span></span>
-<span><span class="co">#&gt; 4          09      11234</span></span>
-<span><span class="co">#&gt; 5          12      10876</span></span></code></pre></div>
-<p>Grade 9 is now <strong>larger</strong> than kindergarten.</p>
-<hr>
-</div>
-<div class="section level3">
-<h3 id="id_10-66-counties-150-districts">10. 66 Counties, 150 Districts<a class="anchor" aria-label="anchor" href="#id_10-66-counties-150-districts"></a>
-</h3>
-<p>South Dakota’s county-based numbering creates interesting patterns.</p>
-<div class="sourceCode" id="cb10"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="fu"><a href="reference/fetch_enr.html">fetch_enr</a></span><span class="op">(</span><span class="fl">2025</span><span class="op">)</span> <span class="op">|&gt;</span></span>
-<span>  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/filter.html" class="external-link">filter</a></span><span class="op">(</span><span class="va">is_district</span>, <span class="va">subgroup</span> <span class="op">==</span> <span class="st">"total_enrollment"</span>, <span class="va">grade_level</span> <span class="op">==</span> <span class="st">"TOTAL"</span><span class="op">)</span> <span class="op">|&gt;</span></span>
-<span>  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/group_by.html" class="external-link">group_by</a></span><span class="op">(</span>county <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/substr.html" class="external-link">substr</a></span><span class="op">(</span><span class="va">district_id</span>, <span class="fl">1</span>, <span class="fl">2</span><span class="op">)</span><span class="op">)</span> <span class="op">|&gt;</span></span>
-<span>  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/summarise.html" class="external-link">summarize</a></span><span class="op">(</span></span>
-<span>    districts <span class="op">=</span> <span class="fu"><a href="https://dplyr.tidyverse.org/reference/context.html" class="external-link">n</a></span><span class="op">(</span><span class="op">)</span>,</span>
-<span>    students <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/sum.html" class="external-link">sum</a></span><span class="op">(</span><span class="va">n_students</span><span class="op">)</span></span>
-<span>  <span class="op">)</span> <span class="op">|&gt;</span></span>
-<span>  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/arrange.html" class="external-link">arrange</a></span><span class="op">(</span><span class="fu"><a href="https://dplyr.tidyverse.org/reference/desc.html" class="external-link">desc</a></span><span class="op">(</span><span class="va">students</span><span class="op">)</span><span class="op">)</span> <span class="op">|&gt;</span></span>
-<span>  <span class="fu"><a href="https://rdrr.io/r/utils/head.html" class="external-link">head</a></span><span class="op">(</span><span class="fl">5</span><span class="op">)</span></span>
-<span><span class="co">#&gt;   county districts students</span></span>
-<span><span class="co">#&gt; 1     49        12    32456</span></span>
-<span><span class="co">#&gt; 2     52         8    18765</span></span>
-<span><span class="co">#&gt; 3     18         6     7654</span></span>
-<span><span class="co">#&gt; 4     11         5     5432</span></span>
-<span><span class="co">#&gt; 5     05         4     4321</span></span></code></pre></div>
-<p>County 49 (Minnehaha/Sioux Falls) has more students than most other counties combined.</p>
-<hr>
-</div>
 </div>
 <div class="section level2">
 <h2 id="installation">Installation<a class="anchor" aria-label="anchor" href="#installation"></a>
 </h2>
-<div class="sourceCode" id="cb11"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb1"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># install.packages("devtools")</span></span>
 <span><span class="fu">devtools</span><span class="fu">::</span><span class="fu">install_github</span><span class="op">(</span><span class="st">"almartin82/sdschooldata"</span><span class="op">)</span></span></code></pre></div>
 </div>
@@ -270,7 +78,7 @@
 <div class="section level3">
 <h3 id="r">R<a class="anchor" aria-label="anchor" href="#r"></a>
 </h3>
-<div class="sourceCode" id="cb12"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb2"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://almartin82.github.io/sdschooldata">sdschooldata</a></span><span class="op">)</span></span>
 <span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://dplyr.tidyverse.org" class="external-link">dplyr</a></span><span class="op">)</span></span>
 <span></span>
@@ -296,23 +104,23 @@
 <div class="section level3">
 <h3 id="python">Python<a class="anchor" aria-label="anchor" href="#python"></a>
 </h3>
-<div class="sourceCode" id="cb13"><pre class="sourceCode python"><code class="sourceCode python"><span id="cb13-1"><a href="#cb13-1" tabindex="-1"></a><span class="im">import</span> pysdschooldata <span class="im">as</span> sd</span>
-<span id="cb13-2"><a href="#cb13-2" tabindex="-1"></a></span>
-<span id="cb13-3"><a href="#cb13-3" tabindex="-1"></a><span class="co"># Fetch 2025 data (2024-25 school year)</span></span>
-<span id="cb13-4"><a href="#cb13-4" tabindex="-1"></a>enr <span class="op">=</span> sd.fetch_enr(<span class="dv">2025</span>)</span>
-<span id="cb13-5"><a href="#cb13-5" tabindex="-1"></a></span>
-<span id="cb13-6"><a href="#cb13-6" tabindex="-1"></a><span class="co"># Statewide total</span></span>
-<span id="cb13-7"><a href="#cb13-7" tabindex="-1"></a>total <span class="op">=</span> enr[(enr[<span class="st">'is_state'</span>] <span class="op">==</span> <span class="va">True</span>) <span class="op">&amp;</span> (enr[<span class="st">'subgroup'</span>] <span class="op">==</span> <span class="st">'total_enrollment'</span>) <span class="op">&amp;</span> (enr[<span class="st">'grade_level'</span>] <span class="op">==</span> <span class="st">'TOTAL'</span>)][<span class="st">'n_students'</span>].<span class="bu">sum</span>()</span>
-<span id="cb13-8"><a href="#cb13-8" tabindex="-1"></a><span class="bu">print</span>(<span class="ss">f"</span><span class="sc">{</span>total<span class="sc">:,}</span><span class="ss"> students"</span>)</span>
-<span id="cb13-9"><a href="#cb13-9" tabindex="-1"></a><span class="co">#&gt; 140,876 students</span></span>
-<span id="cb13-10"><a href="#cb13-10" tabindex="-1"></a></span>
-<span id="cb13-11"><a href="#cb13-11" tabindex="-1"></a><span class="co"># Get multiple years</span></span>
-<span id="cb13-12"><a href="#cb13-12" tabindex="-1"></a>enr_multi <span class="op">=</span> sd.fetch_enr_multi([<span class="dv">2020</span>, <span class="dv">2021</span>, <span class="dv">2022</span>, <span class="dv">2023</span>, <span class="dv">2024</span>, <span class="dv">2025</span>])</span>
-<span id="cb13-13"><a href="#cb13-13" tabindex="-1"></a></span>
-<span id="cb13-14"><a href="#cb13-14" tabindex="-1"></a><span class="co"># Check available years</span></span>
-<span id="cb13-15"><a href="#cb13-15" tabindex="-1"></a>years <span class="op">=</span> sd.get_available_years()</span>
-<span id="cb13-16"><a href="#cb13-16" tabindex="-1"></a><span class="bu">print</span>(<span class="ss">f"Data available: </span><span class="sc">{</span>years[<span class="st">'min_year'</span>]<span class="sc">}</span><span class="ss">-</span><span class="sc">{</span>years[<span class="st">'max_year'</span>]<span class="sc">}</span><span class="ss">"</span>)</span>
-<span id="cb13-17"><a href="#cb13-17" tabindex="-1"></a><span class="co">#&gt; Data available: 2006-2025</span></span></code></pre></div>
+<div class="sourceCode" id="cb3"><pre class="sourceCode python"><code class="sourceCode python"><span id="cb3-1"><a href="#cb3-1" tabindex="-1"></a><span class="im">import</span> pysdschooldata <span class="im">as</span> sd</span>
+<span id="cb3-2"><a href="#cb3-2" tabindex="-1"></a></span>
+<span id="cb3-3"><a href="#cb3-3" tabindex="-1"></a><span class="co"># Fetch 2025 data (2024-25 school year)</span></span>
+<span id="cb3-4"><a href="#cb3-4" tabindex="-1"></a>enr <span class="op">=</span> sd.fetch_enr(<span class="dv">2025</span>)</span>
+<span id="cb3-5"><a href="#cb3-5" tabindex="-1"></a></span>
+<span id="cb3-6"><a href="#cb3-6" tabindex="-1"></a><span class="co"># Statewide total</span></span>
+<span id="cb3-7"><a href="#cb3-7" tabindex="-1"></a>total <span class="op">=</span> enr[(enr[<span class="st">'is_state'</span>] <span class="op">==</span> <span class="va">True</span>) <span class="op">&amp;</span> (enr[<span class="st">'subgroup'</span>] <span class="op">==</span> <span class="st">'total_enrollment'</span>) <span class="op">&amp;</span> (enr[<span class="st">'grade_level'</span>] <span class="op">==</span> <span class="st">'TOTAL'</span>)][<span class="st">'n_students'</span>].<span class="bu">sum</span>()</span>
+<span id="cb3-8"><a href="#cb3-8" tabindex="-1"></a><span class="bu">print</span>(<span class="ss">f"</span><span class="sc">{</span>total<span class="sc">:,}</span><span class="ss"> students"</span>)</span>
+<span id="cb3-9"><a href="#cb3-9" tabindex="-1"></a><span class="co">#&gt; 140,876 students</span></span>
+<span id="cb3-10"><a href="#cb3-10" tabindex="-1"></a></span>
+<span id="cb3-11"><a href="#cb3-11" tabindex="-1"></a><span class="co"># Get multiple years</span></span>
+<span id="cb3-12"><a href="#cb3-12" tabindex="-1"></a>enr_multi <span class="op">=</span> sd.fetch_enr_multi([<span class="dv">2020</span>, <span class="dv">2021</span>, <span class="dv">2022</span>, <span class="dv">2023</span>, <span class="dv">2024</span>, <span class="dv">2025</span>])</span>
+<span id="cb3-13"><a href="#cb3-13" tabindex="-1"></a></span>
+<span id="cb3-14"><a href="#cb3-14" tabindex="-1"></a><span class="co"># Check available years</span></span>
+<span id="cb3-15"><a href="#cb3-15" tabindex="-1"></a>years <span class="op">=</span> sd.get_available_years()</span>
+<span id="cb3-16"><a href="#cb3-16" tabindex="-1"></a><span class="bu">print</span>(<span class="ss">f"Data available: </span><span class="sc">{</span>years[<span class="st">'min_year'</span>]<span class="sc">}</span><span class="ss">-</span><span class="sc">{</span>years[<span class="st">'max_year'</span>]<span class="sc">}</span><span class="ss">"</span>)</span>
+<span id="cb3-17"><a href="#cb3-17" tabindex="-1"></a><span class="co">#&gt; Data available: 2006-2025</span></span></code></pre></div>
 </div>
 </div>
 <div class="section level2">
@@ -443,7 +251,7 @@
 <div class="section level2">
 <h2 id="caching">Caching<a class="anchor" aria-label="anchor" href="#caching"></a>
 </h2>
-<div class="sourceCode" id="cb14"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb4"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># View cached files</span></span>
 <span><span class="fu"><a href="reference/cache_status.html">cache_status</a></span><span class="op">(</span><span class="op">)</span></span>
 <span></span>
