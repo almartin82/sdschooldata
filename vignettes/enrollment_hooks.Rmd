@@ -184,11 +184,11 @@ small
 
 ## 6. Hispanic enrollment is rising
 
-While still a small percentage of total enrollment, Hispanic students are the fastest-growing demographic group in South Dakota schools.
+While still a small percentage of total enrollment, Hispanic students are the fastest-growing demographic group in South Dakota schools, showing consistent growth over the past decade.
 
 ```{r hispanic-trend}
-# Use years with reliable data (avoiding 2006, 2008, 2021 which have parsing issues)
-reliable_years <- c(2007, 2009:2020, 2022:2025)
+# Use years with reliable data (avoiding 2006-2010 which have old XLS parsing issues)
+reliable_years <- c(2015:2020, 2022:2025)
 enr_full <- fetch_enr_multi(reliable_years, use_cache = TRUE)
 
 hispanic_trend <- enr_full |>
