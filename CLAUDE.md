@@ -1,7 +1,6 @@
-### CONCURRENT TASK LIMIT
-- **Maximum 5 background tasks running simultaneously**
-- When launching multiple agents (e.g., for mass audits), batch them in groups of 5
-- Wait for the current batch to complete before launching the next batch
+# State Schooldata Packages
+
+This section contains universal instructions that apply to all 49 state schooldata packages.
 
 ---
 
@@ -11,72 +10,11 @@
 
 ---
 
-
-# Claude Code Instructions
-
-### GIT COMMIT POLICY
-- Commits are allowed
-- NO Claude Code attribution, NO Co-Authored-By trailers, NO emojis
-- Write normal commit messages as if a human wrote them
-
----
-
-## Local Testing Before PRs (REQUIRED)
-
-**PRs will not be merged until CI passes.** Run these checks locally BEFORE opening a PR:
-
-### CI Checks That Must Pass
-
-| Check | Local Command | What It Tests |
-|-------|---------------|---------------|
-| R-CMD-check | `devtools::check()` | Package builds, tests pass, no errors/warnings |
-| Python tests | `pytest tests/test_pysdschooldata.py -v` | Python wrapper works correctly |
-| pkgdown | `pkgdown::build_site()` | Documentation and vignettes render |
-
-### Quick Commands
-
-```r
-# R package check (required)
-devtools::check()
-
-# Python tests (required)
-system("pip install -e ./pysdschooldata && pytest tests/test_pysdschooldata.py -v")
-
-# pkgdown build (required)
-pkgdown::build_site()
-```
-
-### Pre-PR Checklist
-
-Before opening a PR, verify:
-- [ ] `devtools::check()` — 0 errors, 0 warnings
-- [ ] `pytest tests/test_pysdschooldata.py` — all tests pass
-- [ ] `pkgdown::build_site()` — builds without errors
-- [ ] Vignettes render (no `eval=FALSE` hacks)
-
----
-
-## LIVE Pipeline Testing
-
-This package includes `tests/testthat/test-pipeline-live.R` with LIVE network tests.
-
-### Test Categories:
-1. URL Availability - HTTP 200 checks
-2. File Download - Verify actual file (not HTML error)
-3. File Parsing - readxl/readr succeeds
-4. Column Structure - Expected columns exist
-5. get_raw_enr() - Raw data function works
-6. Data Quality - No Inf/NaN, non-negative counts
-7. Aggregation - State total > 0
-8. Output Fidelity - tidy=TRUE matches raw
-
-### Running Tests:
-```r
-devtools::test(filter = "pipeline-live")
-```
-
-See `state-schooldata/CLAUDE.md` for complete testing framework documentation.
-
+## Git Commits and PRs
+- NEVER reference Claude, Claude Code, or AI assistance in commit messages
+- NEVER reference Claude, Claude Code, or AI assistance in PR descriptions
+- NEVER add Co-Authored-By lines mentioning Claude or Anthropic
+- Keep commit messages focused on what changed, not how it was written
 
 ---
 
@@ -124,6 +62,71 @@ PRs auto-merge when ALL CI checks pass:
 
 If CI fails, fix the issue and push - auto-merge triggers when checks pass.
 
+---
+
+## Local Testing Before PRs (REQUIRED)
+
+**PRs will not be merged until CI passes.** Run these checks locally BEFORE opening a PR:
+
+### CI Checks That Must Pass
+
+| Check | Local Command | What It Tests |
+|-------|---------------|---------------|
+| R-CMD-check | `devtools::check()` | Package builds, tests pass, no errors/warnings |
+| Python tests | `pytest tests/test_py{st}schooldata.py -v` | Python wrapper works correctly |
+| pkgdown | `pkgdown::build_site()` | Documentation and vignettes render |
+
+### Quick Commands
+
+```r
+# R package check (required)
+devtools::check()
+
+# Python tests (required)
+system("pip install -e ./py{st}schooldata && pytest tests/test_py{st}schooldata.py -v")
+
+# pkgdown build (required)
+pkgdown::build_site()
+```
+
+### Pre-PR Checklist
+
+Before opening a PR, verify:
+- [ ] `devtools::check()` — 0 errors, 0 warnings
+- [ ] `pytest tests/test_py{st}schooldata.py` — all tests pass
+- [ ] `pkgdown::build_site()` — builds without errors
+- [ ] Vignettes render (no `eval=FALSE` hacks)
+
+---
+
+## LIVE Pipeline Testing
+
+This package includes `tests/testthat/test-pipeline-live.R` with LIVE network tests.
+
+### Test Categories:
+1. URL Availability - HTTP 200 checks
+2. File Download - Verify actual file (not HTML error)
+3. File Parsing - readxl/readr succeeds
+4. Column Structure - Expected columns exist
+5. get_raw_enr() - Raw data function works
+6. Data Quality - No Inf/NaN, non-negative counts
+7. Aggregation - State total > 0
+8. Output Fidelity - tidy=TRUE matches raw
+
+### Running Tests:
+```r
+devtools::test(filter = "pipeline-live")
+```
+
+---
+
+## Fidelity Requirement
+
+**tidy=TRUE MUST maintain fidelity to raw, unprocessed data:**
+- Enrollment counts in tidy format must exactly match the wide format
+- No rounding or transformation of counts during tidying
+- Percentages are calculated fresh but counts are preserved
+- State aggregates are sums of school-level data
 
 ---
 
@@ -149,7 +152,7 @@ README images MUST come from pkgdown-generated vignette output so they auto-upda
 
 The Idaho fix revealed critical bugs when README code didn't match vignettes:
 - Wrong district names (lowercase vs ALL CAPS)
-- Text claims that contradicted actual data  
+- Text claims that contradicted actual data
 - Missing data output in examples
 
 ### README Story Structure (REQUIRED)
@@ -202,3 +205,35 @@ enr %>%
 
 ![Chart](https://almartin82.github.io/arschooldata/articles/...)
 ```
+
+---
+
+# sdschooldata Package
+
+This section contains South Dakota-specific instructions and information.
+
+---
+
+## Data Availability
+
+**Available Years:** 2021-2025
+
+**Data Source:** South Dakota Department of Education
+- URL: [Add your state's URL here]
+- Files: [Add file descriptions here]
+
+---
+
+## Python Testing
+
+Python wrapper test file: `tests/test_pysdschooldata.py`
+
+```bash
+pip install -e ./pysdschooldata && pytest tests/test_pysdschooldata.py -v
+```
+
+---
+
+## Known Data Issues
+
+[Add any state-specific data issues or quirks here]
