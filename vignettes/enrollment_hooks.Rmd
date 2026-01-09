@@ -36,7 +36,7 @@ This vignette explores South Dakota's public school enrollment data, surfacing k
 Unlike many states seeing post-pandemic declines, South Dakota's public school enrollment has been relatively stable with modest growth, reaching approximately 140,000 students.
 
 ```{r statewide-trend}
-enr <- fetch_enr_multi(c(2015:2020, 2022:2025, use_cache = TRUE))
+enr <- fetch_enr_multi(c(2015:2020, 2022:2025), use_cache = TRUE)
 
 state_totals <- enr |>
   filter(is_state, subgroup == "total_enrollment", grade_level == "TOTAL") |>
@@ -219,7 +219,7 @@ ggplot(hispanic_trend, aes(x = end_year, y = pct)) +
 Harrisburg and Tea Area have seen explosive growth as Sioux Falls suburbs boom, with Harrisburg tripling its enrollment in just 15 years.
 
 ```{r suburban-growth}
-suburbs <- fetch_enr_multi(c(2011, 2015, 2020, 2025, use_cache = TRUE))
+suburbs <- fetch_enr_multi(c(2011, 2015, 2020, 2025), use_cache = TRUE)
 
 suburb_trend <- suburbs |>
   filter(is_district, subgroup == "total_enrollment", grade_level == "TOTAL",
@@ -287,7 +287,7 @@ rapid |>
 Districts serving reservation communities face unique challenges. Todd County (Rosebud) and Oglala Lakota County (Pine Ridge) serve predominantly Native American students.
 
 ```{r reservation-schools}
-reservation <- fetch_enr_multi(c(2015, 2020, 2025, use_cache = TRUE))
+reservation <- fetch_enr_multi(c(2015, 2020, 2025), use_cache = TRUE)
 
 res_data <- reservation |>
   filter(is_district,
@@ -504,7 +504,7 @@ fetch_enr(2025, use_cache = TRUE) |>
 Multiracial students are one of the fastest-growing demographic categories, reflecting changing family patterns statewide.
 
 ```{r multiracial}
-multi <- fetch_enr_multi(c(2015, 2018, 2022, 2025, use_cache = TRUE))
+multi <- fetch_enr_multi(c(2015, 2018, 2022, 2025), use_cache = TRUE)
 
 multi_trend <- multi |>
   filter(is_state, subgroup == "multiracial", grade_level == "TOTAL") |>
@@ -515,7 +515,7 @@ multi_trend
 ```
 
 ```{r multiracial-chart}
-fetch_enr_multi(c(2015, 2018, 2022, 2025, use_cache = TRUE)) |>
+fetch_enr_multi(c(2015, 2018, 2022, 2025), use_cache = TRUE) |>
   filter(is_state, subgroup == "multiracial", grade_level == "TOTAL") |>
   ggplot(aes(x = end_year, y = n_students)) +
   geom_col(fill = "#17BECF", width = 2) +
