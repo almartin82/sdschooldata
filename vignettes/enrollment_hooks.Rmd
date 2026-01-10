@@ -1,8 +1,8 @@
 ---
-title: "10 Insights from South Dakota School Enrollment Data"
+title: "15 Insights from South Dakota School Enrollment Data"
 output: rmarkdown::html_vignette
 vignette: >
-  %\VignetteIndexEntry{10 Insights from South Dakota School Enrollment Data}
+  %\VignetteIndexEntry{15 Insights from South Dakota School Enrollment Data}
   %\VignetteEngine{knitr::rmarkdown}
   %\VignetteEncoding{UTF-8}
 ---
@@ -14,12 +14,9 @@ knitr::opts_chunk$set(
   message = FALSE,
   warning = FALSE,
   fig.width = 8,
-  fig.height = 5,
-  eval = FALSE
+  fig.height = 5
 )
 ```
-
-**Note:** This vignette demonstrates how to analyze South Dakota enrollment data. Code chunks are not evaluated during package build; run interactively to see results.
 
 ```{r load-packages}
 library(sdschooldata)
@@ -39,7 +36,7 @@ This vignette explores South Dakota's public school enrollment data, surfacing k
 Unlike many states seeing post-pandemic declines, South Dakota's public school enrollment has been relatively stable with modest growth, reaching approximately 140,000 students.
 
 ```{r statewide-trend}
-enr <- fetch_enr_multi(c(2015:2020, 2022:2025))
+enr <- fetch_enr_multi(c(2015:2020, 2022:2025), use_cache = TRUE)
 
 state_totals <- enr |>
   filter(is_state, subgroup == "total_enrollment", grade_level == "TOTAL") |>
@@ -71,7 +68,7 @@ ggplot(state_totals, aes(x = end_year, y = n_students)) +
 The Sioux Falls School District is by far the largest in the state, with more students than the next several districts combined. Rapid City is a distant second.
 
 ```{r top-districts}
-enr_2025 <- fetch_enr(2025)
+enr_2025 <- fetch_enr(2025, use_cache = TRUE)
 
 top_10 <- enr_2025 |>
   filter(is_district, subgroup == "total_enrollment", grade_level == "TOTAL") |>
@@ -187,12 +184,12 @@ small
 
 ## 6. Hispanic enrollment is rising
 
-While still a small percentage of total enrollment, Hispanic students are the fastest-growing demographic group in South Dakota schools.
+While still a small percentage of total enrollment, Hispanic students are the fastest-growing demographic group in South Dakota schools, showing consistent growth over the past decade.
 
 ```{r hispanic-trend}
-# Use years with reliable data (avoiding 2006, 2008, 2021 which have parsing issues)
-reliable_years <- c(2007, 2009:2020, 2022:2025)
-enr_full <- fetch_enr_multi(reliable_years)
+# Use years with reliable data (avoiding 2006-2010 which have old XLS parsing issues)
+reliable_years <- c(2015:2020, 2022:2025)
+enr_full <- fetch_enr_multi(reliable_years, use_cache = TRUE)
 
 hispanic_trend <- enr_full |>
   filter(is_state, subgroup == "hispanic", grade_level == "TOTAL") |>
@@ -217,6 +214,323 @@ ggplot(hispanic_trend, aes(x = end_year, y = pct)) +
 
 ---
 
+## 7. Sioux Falls suburban growth outpaces the city
+
+Harrisburg and Tea Area have seen explosive growth as Sioux Falls suburbs boom, with Harrisburg tripling its enrollment in just 15 years.
+
+```{r suburban-growth}
+suburbs <- fetch_enr_multi(c(2011, 2015, 2020, 2025), use_cache = TRUE)
+
+suburb_trend <- suburbs |>
+  filter(is_district, subgroup == "total_enrollment", grade_level == "TOTAL",
+         grepl("Harrisburg|Tea Area|Brandon Valley", district_name)) |>
+  select(end_year, district_name, n_students)
+
+suburb_trend
+```
+
+```{r suburban-growth-chart}
+suburbs |>
+  filter(is_district, subgroup == "total_enrollment", grade_level == "TOTAL",
+         grepl("Harrisburg|Tea Area|Brandon Valley", district_name)) |>
+  ggplot(aes(x = end_year, y = n_students, color = district_name)) +
+  geom_line(linewidth = 1.2) +
+  geom_point(size = 3) +
+  scale_y_continuous(labels = scales::comma) +
+  scale_color_brewer(palette = "Set1") +
+  labs(
+    title = "Sioux Falls Suburban District Growth",
+    subtitle = "Harrisburg, Tea Area, and Brandon Valley boom",
+    x = "School Year",
+    y = "Total Enrollment",
+    color = "District"
+  )
+```
+
+---
+
+## 8. Rapid City: West River anchor
+
+Rapid City Area School District anchors western South Dakota, serving as the only major urban district west of the Missouri River.
+
+```{r rapid-city}
+rapid <- fetch_enr_multi(2015:2025, use_cache = TRUE)
+
+rapid_trend <- rapid |>
+  filter(is_district, grepl("Rapid City", district_name),
+         subgroup == "total_enrollment", grade_level == "TOTAL") |>
+  select(end_year, n_students)
+
+rapid_trend
+```
+
+```{r rapid-city-chart}
+rapid |>
+  filter(is_district, grepl("Rapid City", district_name),
+         subgroup == "total_enrollment", grade_level == "TOTAL") |>
+  ggplot(aes(x = end_year, y = n_students)) +
+  geom_line(linewidth = 1.2, color = "#8B4513") +
+  geom_point(size = 3, color = "#8B4513") +
+  scale_y_continuous(labels = scales::comma, limits = c(12000, 16000)) +
+  labs(
+    title = "Rapid City Area School District Enrollment",
+    subtitle = "West River's educational hub",
+    x = "School Year",
+    y = "Total Enrollment"
+  )
+```
+
+---
+
+## 9. Reservation schools: Todd County and Pine Ridge
+
+Districts serving reservation communities face unique challenges. Todd County (Rosebud) and Oglala Lakota County (Pine Ridge) serve predominantly Native American students.
+
+```{r reservation-schools}
+reservation <- fetch_enr_multi(c(2015, 2020, 2025), use_cache = TRUE)
+
+res_data <- reservation |>
+  filter(is_district,
+         grepl("Todd County|Oglala Lakota|Shannon", district_name),
+         subgroup %in% c("total_enrollment", "native_american"),
+         grade_level == "TOTAL")
+
+res_data
+```
+
+```{r reservation-chart}
+reservation |>
+  filter(is_district,
+         grepl("Todd County|Oglala Lakota", district_name),
+         subgroup == "total_enrollment",
+         grade_level == "TOTAL") |>
+  ggplot(aes(x = end_year, y = n_students, fill = district_name)) +
+  geom_col(position = "dodge") +
+  scale_fill_brewer(palette = "Set2") +
+  labs(
+    title = "Reservation School District Enrollment",
+    subtitle = "Todd County (Rosebud) and Oglala Lakota County (Pine Ridge)",
+    x = "School Year",
+    y = "Enrollment",
+    fill = "District"
+  )
+```
+
+---
+
+## 10. Rural consolidation pressure
+
+Many of South Dakota's smallest districts face consolidation pressure. Districts with fewer than 100 students struggle with economies of scale.
+
+```{r rural-tiny}
+tiny <- fetch_enr(2025, use_cache = TRUE)
+
+tiny_districts <- tiny |>
+  filter(is_district, subgroup == "total_enrollment", grade_level == "TOTAL",
+         n_students < 100) |>
+  arrange(n_students) |>
+  head(20) |>
+  select(district_name, n_students)
+
+tiny_districts
+```
+
+```{r rural-distribution-chart}
+fetch_enr(2025, use_cache = TRUE) |>
+  filter(is_district, subgroup == "total_enrollment", grade_level == "TOTAL") |>
+  mutate(size_category = cut(n_students,
+                              breaks = c(0, 100, 250, 500, 1000, 5000, Inf),
+                              labels = c("<100", "100-249", "250-499", "500-999", "1000-4999", "5000+"))) |>
+  count(size_category) |>
+  ggplot(aes(x = size_category, y = n, fill = size_category)) +
+  geom_col(show.legend = FALSE) +
+  geom_text(aes(label = n), vjust = -0.5) +
+  scale_fill_viridis_d(option = "C") +
+  labs(
+    title = "South Dakota Districts by Enrollment Size",
+    subtitle = "Many tiny districts face consolidation pressure",
+    x = "District Size",
+    y = "Number of Districts"
+  )
+```
+
+---
+
+## 11. Gender balance across districts
+
+South Dakota schools are remarkably balanced by gender, though some variation exists across districts and grade levels.
+
+```{r gender-balance}
+gender <- fetch_enr(2025, use_cache = TRUE)
+
+gender_state <- gender |>
+  filter(is_state, grade_level == "TOTAL",
+         subgroup %in% c("male", "female")) |>
+  select(subgroup, n_students, pct) |>
+  mutate(pct = round(pct * 100, 1))
+
+gender_state
+```
+
+```{r gender-chart}
+fetch_enr(2025, use_cache = TRUE) |>
+  filter(is_state, subgroup %in% c("male", "female"),
+         !grade_level %in% c("TOTAL", "PK", "UG")) |>
+  ggplot(aes(x = grade_level, y = n_students, fill = subgroup)) +
+  geom_col(position = "dodge") +
+  scale_fill_manual(values = c("female" = "#E7298A", "male" = "#1B9E77"),
+                    labels = c("Female", "Male")) +
+  labs(
+    title = "Enrollment by Gender and Grade Level",
+    subtitle = "Slight male majority in early grades, converges by high school",
+    x = "Grade Level",
+    y = "Enrollment",
+    fill = "Gender"
+  )
+```
+
+---
+
+## 12. The Black Hills corridor
+
+The Black Hills region forms a distinct educational corridor, with Rapid City at its center and smaller communities like Spearfish, Sturgis, and Custer serving surrounding areas.
+
+```{r black-hills}
+black_hills <- fetch_enr(2025, use_cache = TRUE)
+
+bh_districts <- black_hills |>
+  filter(is_district, subgroup == "total_enrollment", grade_level == "TOTAL",
+         grepl("Rapid City|Spearfish|Sturgis|Custer|Lead|Deadwood|Belle Fourche", district_name)) |>
+  arrange(desc(n_students)) |>
+  select(district_name, n_students)
+
+bh_districts
+```
+
+```{r black-hills-chart}
+fetch_enr(2025, use_cache = TRUE) |>
+  filter(is_district, subgroup == "total_enrollment", grade_level == "TOTAL",
+         grepl("Rapid City|Spearfish|Sturgis|Custer|Lead|Belle Fourche", district_name)) |>
+  mutate(district_name = forcats::fct_reorder(district_name, n_students)) |>
+  ggplot(aes(x = n_students, y = district_name, fill = district_name)) +
+  geom_col(show.legend = FALSE) +
+  scale_x_continuous(labels = scales::comma) +
+  scale_fill_viridis_d(option = "D") +
+  labs(
+    title = "Black Hills Corridor School Districts",
+    subtitle = "Rapid City dominates western South Dakota",
+    x = "Total Enrollment",
+    y = NULL
+  )
+```
+
+---
+
+## 13. Aberdeen and the northeast
+
+Aberdeen School District anchors the northeast, with surrounding agricultural communities feeding into regional schools.
+
+```{r northeast}
+northeast <- fetch_enr_multi(2015:2025, use_cache = TRUE)
+
+ne_trend <- northeast |>
+  filter(is_district, grepl("Aberdeen", district_name),
+         subgroup == "total_enrollment", grade_level == "TOTAL") |>
+  select(end_year, n_students)
+
+ne_trend
+```
+
+```{r northeast-chart}
+fetch_enr_multi(2015:2025, use_cache = TRUE) |>
+  filter(is_district,
+         grepl("Aberdeen|Watertown|Huron|Mitchell", district_name),
+         subgroup == "total_enrollment", grade_level == "TOTAL") |>
+  ggplot(aes(x = end_year, y = n_students, color = district_name)) +
+  geom_line(linewidth = 1.2) +
+  geom_point(size = 2) +
+  scale_y_continuous(labels = scales::comma) +
+  scale_color_brewer(palette = "Dark2") +
+  labs(
+    title = "Regional Hub Districts: East River",
+    subtitle = "Aberdeen, Watertown, Huron, and Mitchell anchor their regions",
+    x = "School Year",
+    y = "Enrollment",
+    color = "District"
+  )
+```
+
+---
+
+## 14. Pre-K enrollment patterns
+
+Pre-kindergarten enrollment varies significantly across districts, reflecting different local policies and access to early childhood programs.
+
+```{r prek}
+prek <- fetch_enr(2025, use_cache = TRUE)
+
+prek_data <- prek |>
+  filter(is_district, subgroup == "total_enrollment", grade_level == "PK") |>
+  filter(n_students > 0) |>
+  arrange(desc(n_students)) |>
+  head(15) |>
+  select(district_name, n_students)
+
+prek_data
+```
+
+```{r prek-chart}
+fetch_enr(2025, use_cache = TRUE) |>
+  filter(is_district, subgroup == "total_enrollment", grade_level == "PK") |>
+  filter(n_students > 0) |>
+  arrange(desc(n_students)) |>
+  head(10) |>
+  mutate(district_name = forcats::fct_reorder(district_name, n_students)) |>
+  ggplot(aes(x = n_students, y = district_name)) +
+  geom_col(fill = "#9467BD") +
+  scale_x_continuous(labels = scales::comma) +
+  labs(
+    title = "Top 10 Districts by Pre-K Enrollment",
+    subtitle = "Urban districts lead in early childhood programs",
+    x = "Pre-K Students",
+    y = NULL
+  )
+```
+
+---
+
+## 15. Multiracial students: South Dakota's growing diversity
+
+Multiracial students are one of the fastest-growing demographic categories, reflecting changing family patterns statewide.
+
+```{r multiracial}
+multi <- fetch_enr_multi(c(2015, 2018, 2022, 2025), use_cache = TRUE)
+
+multi_trend <- multi |>
+  filter(is_state, subgroup == "multiracial", grade_level == "TOTAL") |>
+  select(end_year, n_students, pct) |>
+  mutate(pct = round(pct * 100, 2))
+
+multi_trend
+```
+
+```{r multiracial-chart}
+fetch_enr_multi(c(2015, 2018, 2022, 2025), use_cache = TRUE) |>
+  filter(is_state, subgroup == "multiracial", grade_level == "TOTAL") |>
+  ggplot(aes(x = end_year, y = n_students)) +
+  geom_col(fill = "#17BECF", width = 2) +
+  geom_text(aes(label = scales::comma(n_students)), vjust = -0.5) +
+  scale_y_continuous(labels = scales::comma, expand = expansion(mult = c(0, 0.15))) +
+  labs(
+    title = "Multiracial Student Enrollment Growth",
+    subtitle = "One of the fastest-growing demographic categories",
+    x = "School Year",
+    y = "Number of Students"
+  )
+```
+
+---
+
 ## Summary
 
 South Dakota's school enrollment data reveals:
@@ -224,8 +538,13 @@ South Dakota's school enrollment data reveals:
 - **Steady growth**: Unlike many states, South Dakota enrollment remains stable
 - **Urban concentration**: Sioux Falls and Rapid City dominate enrollment
 - **Native American presence**: Significant Native American student population
-- **Rural challenges**: Many very small districts across the state
-- **Demographic change**: Hispanic enrollment growing steadily
+- **Suburban boom**: Harrisburg and Tea Area growing rapidly
+- **Reservation challenges**: Todd and Oglala Lakota counties serve unique populations
+- **Rural struggles**: Many tiny districts face consolidation pressure
+- **Demographic change**: Hispanic and multiracial enrollment growing steadily
+- **Gender balance**: Schools are remarkably balanced by gender
+- **Regional hubs**: Black Hills and northeast districts anchor their regions
+- **Early childhood**: Pre-K access varies significantly across districts
 
 These trends have implications for school funding, facility planning, and educational equity across the Mount Rushmore State.
 
