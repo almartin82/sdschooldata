@@ -552,3 +552,11 @@ These trends have implications for school funding, facility planning, and educat
 ---
 
 *Data sourced from the South Dakota Department of Education [Fall Census](https://doe.sd.gov/ofm/enrollment.aspx).*
+
+---
+
+## Session Info
+
+```{r session-info}
+sessionInfo()
+```
