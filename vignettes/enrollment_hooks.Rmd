@@ -555,6 +555,8 @@ These trends have implications for school funding, facility planning, and educat
 
 ---
 
+## Session Info
+
 ```{r session-info}
 sessionInfo()
 ```

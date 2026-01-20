@@ -48,6 +48,12 @@ home:
   - text: "Part of the 50 State Schooldata Family"
     href: https://github.com/almartin82/njschooldata
 
+articles:
+- title: "Vignettes"
+  navbar: ~
+  contents:
+  - enrollment_hooks
+
 authors:
   Al Martin:
     href: https://github.com/almartin82
