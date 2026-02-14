@@ -99,7 +99,7 @@
 <span><span class="va">enr</span> <span class="op">|&gt;</span></span>
 <span>  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/filter.html" class="external-link">filter</a></span><span class="op">(</span><span class="va">is_state</span>, <span class="va">subgroup</span> <span class="op">==</span> <span class="st">"total_enrollment"</span>, <span class="va">grade_level</span> <span class="op">==</span> <span class="st">"TOTAL"</span><span class="op">)</span> <span class="op">|&gt;</span></span>
 <span>  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/pull.html" class="external-link">pull</a></span><span class="op">(</span><span class="va">n_students</span><span class="op">)</span></span>
-<span><span class="co">#&gt; 140,876</span></span>
+<span><span class="co">#&gt; 138,861</span></span>
 <span></span>
 <span><span class="co"># Top 10 districts</span></span>
 <span><span class="va">enr</span> <span class="op">|&gt;</span></span>
@@ -122,7 +122,7 @@
 <span id="cb4-6"><a href="#cb4-6" tabindex="-1"></a><span class="co"># Statewide total</span></span>
 <span id="cb4-7"><a href="#cb4-7" tabindex="-1"></a>total <span class="op">=</span> enr[(enr[<span class="st">'is_state'</span>] <span class="op">==</span> <span class="va">True</span>) <span class="op">&amp;</span> (enr[<span class="st">'subgroup'</span>] <span class="op">==</span> <span class="st">'total_enrollment'</span>) <span class="op">&amp;</span> (enr[<span class="st">'grade_level'</span>] <span class="op">==</span> <span class="st">'TOTAL'</span>)][<span class="st">'n_students'</span>].<span class="bu">sum</span>()</span>
 <span id="cb4-8"><a href="#cb4-8" tabindex="-1"></a><span class="bu">print</span>(<span class="ss">f"</span><span class="sc">{</span>total<span class="sc">:,}</span><span class="ss"> students"</span>)</span>
-<span id="cb4-9"><a href="#cb4-9" tabindex="-1"></a><span class="co">#&gt; 140,876 students</span></span>
+<span id="cb4-9"><a href="#cb4-9" tabindex="-1"></a><span class="co">#&gt; 138,861 students</span></span>
 <span id="cb4-10"><a href="#cb4-10" tabindex="-1"></a></span>
 <span id="cb4-11"><a href="#cb4-11" tabindex="-1"></a><span class="co"># Get multiple years</span></span>
 <span id="cb4-12"><a href="#cb4-12" tabindex="-1"></a>enr_multi <span class="op">=</span> sd.fetch_enr_multi([<span class="dv">2020</span>, <span class="dv">2021</span>, <span class="dv">2022</span>, <span class="dv">2023</span>, <span class="dv">2024</span>, <span class="dv">2025</span>])</span>
@@ -161,18 +161,17 @@
 <span>         pct_change <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/Round.html" class="external-link">round</a></span><span class="op">(</span><span class="va">change</span> <span class="op">/</span> <span class="fu"><a href="https://dplyr.tidyverse.org/reference/lead-lag.html" class="external-link">lag</a></span><span class="op">(</span><span class="va">n_students</span><span class="op">)</span> <span class="op">*</span> <span class="fl">100</span>, <span class="fl">2</span><span class="op">)</span><span class="op">)</span></span>
 <span></span>
 <span><span class="va">state_totals</span></span>
-<span><span class="co">#&gt; # A tibble: 9 x 4</span></span>
-<span><span class="co">#&gt;   end_year n_students change pct_change</span></span>
-<span><span class="co">#&gt;      &lt;dbl&gt;      &lt;dbl&gt;  &lt;dbl&gt;      &lt;dbl&gt;</span></span>
-<span><span class="co">#&gt; 1     2015     132867     NA      NA</span></span>
-<span><span class="co">#&gt; 2     2016     134063   1196       0.9</span></span>
-<span><span class="co">#&gt; 3     2017     135178   1115       0.83</span></span>
-<span><span class="co">#&gt; 4     2018     136476   1298       0.96</span></span>
-<span><span class="co">#&gt; 5     2019     137860   1384       1.01</span></span>
-<span><span class="co">#&gt; 6     2020     138930   1070       0.78</span></span>
-<span><span class="co">#&gt; 7     2022     140188   1258       0.91</span></span>
-<span><span class="co">#&gt; 8     2023     140430    242       0.17</span></span>
-<span><span class="co">#&gt; 9     2025     140876    446       0.32</span></span></code></pre></div>
+<span><span class="co">#&gt;    end_year n_students change pct_change</span></span>
+<span><span class="co">#&gt; 1      2015     134054     NA         NA</span></span>
+<span><span class="co">#&gt; 2      2016     135811   1757       1.31</span></span>
+<span><span class="co">#&gt; 3      2017     137251   1440       1.06</span></span>
+<span><span class="co">#&gt; 4      2018     138428   1177       0.86</span></span>
+<span><span class="co">#&gt; 5      2019     139442   1014       0.73</span></span>
+<span><span class="co">#&gt; 6      2020     139154   -288      -0.21</span></span>
+<span><span class="co">#&gt; 7      2022     141429   2275       1.63</span></span>
+<span><span class="co">#&gt; 8      2023     141005   -424      -0.30</span></span>
+<span><span class="co">#&gt; 9      2024     140587   -418      -0.30</span></span>
+<span><span class="co">#&gt; 10     2025     138861  -1726      -1.23</span></span></code></pre></div>
 <div class="float">
 <img src="https://almartin82.github.io/sdschooldata/articles/enrollment_hooks_files/figure-html/statewide-chart-1.png" alt="Statewide enrollment trend"><div class="figcaption">Statewide enrollment trend</div>
 </div>
@@ -192,19 +191,17 @@
 <span>  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/select.html" class="external-link">select</a></span><span class="op">(</span><span class="va">district_name</span>, <span class="va">n_students</span><span class="op">)</span></span>
 <span></span>
 <span><span class="va">top_10</span></span>
-<span><span class="co">#&gt; # A tibble: 10 x 2</span></span>
-<span><span class="co">#&gt;    district_name              n_students</span></span>
-<span><span class="co">#&gt;    &lt;chr&gt;                           &lt;dbl&gt;</span></span>
-<span><span class="co">#&gt;  1 Sioux Falls School District     26478</span></span>
-<span><span class="co">#&gt;  2 Rapid City Area School Dis...   14234</span></span>
-<span><span class="co">#&gt;  3 Harrisburg School District       8127</span></span>
-<span><span class="co">#&gt;  4 Brandon Valley School Dist...    5421</span></span>
-<span><span class="co">#&gt;  5 Watertown School District        4385</span></span>
-<span><span class="co">#&gt;  6 Aberdeen School District         3962</span></span>
-<span><span class="co">#&gt;  7 Tea Area School District         3881</span></span>
-<span><span class="co">#&gt;  8 Brookings School District        3234</span></span>
-<span><span class="co">#&gt;  9 Mitchell School District         2687</span></span>
-<span><span class="co">#&gt; 10 Pierre School District           2519</span></span></code></pre></div>
+<span><span class="co">#&gt;           district_name n_students</span></span>
+<span><span class="co">#&gt; 1      Sioux Falls 49-5      24841</span></span>
+<span><span class="co">#&gt; 2  Rapid City Area 51-4      12040</span></span>
+<span><span class="co">#&gt; 3       Harrisburg 41-2       6398</span></span>
+<span><span class="co">#&gt; 4   Brandon Valley 49-2       5206</span></span>
+<span><span class="co">#&gt; 5         Aberdeen 06-1       4134</span></span>
+<span><span class="co">#&gt; 6        Brookings 05-1       3483</span></span>
+<span><span class="co">#&gt; 7        Watertown 14-4       3425</span></span>
+<span><span class="co">#&gt; 8            Huron 02-2       3042</span></span>
+<span><span class="co">#&gt; 9          Yankton 63-3       2973</span></span>
+<span><span class="co">#&gt; 10           Meade 46-1       2957</span></span></code></pre></div>
 <div class="float">
 <img src="https://almartin82.github.io/sdschooldata/articles/enrollment_hooks_files/figure-html/top-districts-chart-1.png" alt="Top 10 districts"><div class="figcaption">Top 10 districts</div>
 </div>
@@ -223,15 +220,8 @@
 <span>  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/arrange.html" class="external-link">arrange</a></span><span class="op">(</span><span class="fu"><a href="https://dplyr.tidyverse.org/reference/desc.html" class="external-link">desc</a></span><span class="op">(</span><span class="va">n_students</span><span class="op">)</span><span class="op">)</span></span>
 <span></span>
 <span><span class="va">demographics</span></span>
-<span><span class="co">#&gt; # A tibble: 6 x 3</span></span>
-<span><span class="co">#&gt;   subgroup        n_students   pct</span></span>
-<span><span class="co">#&gt;   &lt;chr&gt;                &lt;dbl&gt; &lt;dbl&gt;</span></span>
-<span><span class="co">#&gt; 1 white               104298  74</span></span>
-<span><span class="co">#&gt; 2 native_american      15987  11.3</span></span>
-<span><span class="co">#&gt; 3 hispanic              8453   6</span></span>
-<span><span class="co">#&gt; 4 multiracial           6892   4.9</span></span>
-<span><span class="co">#&gt; 5 black                 3152   2.2</span></span>
-<span><span class="co">#&gt; 6 asian                 2094   1.5</span></span></code></pre></div>
+<span><span class="co">#&gt; [1] subgroup   n_students pct</span></span>
+<span><span class="co">#&gt; &lt;0 rows&gt; (or 0-length row.names)</span></span></code></pre></div>
 <div class="float">
 <img src="https://almartin82.github.io/sdschooldata/articles/enrollment_hooks_files/figure-html/demographics-chart-1.png" alt="Demographics chart"><div class="figcaption">Demographics chart</div>
 </div>
@@ -255,14 +245,13 @@
 <span>  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/arrange.html" class="external-link">arrange</a></span><span class="op">(</span><span class="fu"><a href="https://dplyr.tidyverse.org/reference/desc.html" class="external-link">desc</a></span><span class="op">(</span><span class="va">pct_change</span><span class="op">)</span><span class="op">)</span></span>
 <span></span>
 <span><span class="va">urban_growth</span></span>
-<span><span class="co">#&gt; # A tibble: 5 x 4</span></span>
-<span><span class="co">#&gt;   district_name                   y2015 y2025 pct_change</span></span>
-<span><span class="co">#&gt;   &lt;chr&gt;                           &lt;dbl&gt; &lt;dbl&gt;      &lt;dbl&gt;</span></span>
-<span><span class="co">#&gt; 1 Sioux Falls School District     23567 26478       12.4</span></span>
-<span><span class="co">#&gt; 2 Watertown School District        3833  4385       14.4</span></span>
-<span><span class="co">#&gt; 3 Brookings School District        3030  3234        6.7</span></span>
-<span><span class="co">#&gt; 4 Aberdeen School District         3775  3962        5</span></span>
-<span><span class="co">#&gt; 5 Rapid City Area School Dist...  13489 14234        5.5</span></span></code></pre></div>
+<span><span class="co">#&gt; # A tibble: 4 x 4</span></span>
+<span><span class="co">#&gt;   district_name    y2015 y2025 pct_change</span></span>
+<span><span class="co">#&gt;   &lt;chr&gt;            &lt;dbl&gt; &lt;dbl&gt;      &lt;dbl&gt;</span></span>
+<span><span class="co">#&gt; 1 Brookings 05-1    3351  3483        3.9</span></span>
+<span><span class="co">#&gt; 2 Sioux Falls 49-5 24216 24841        2.6</span></span>
+<span><span class="co">#&gt; 3 Aberdeen 06-1     4485  4134       -7.8</span></span>
+<span><span class="co">#&gt; 4 Watertown 14-4    4016  3425      -14.7</span></span></code></pre></div>
 <div class="float">
 <img src="https://almartin82.github.io/sdschooldata/articles/enrollment_hooks_files/figure-html/regional-chart-1.png" alt="Urban growth chart"><div class="figcaption">Urban growth chart</div>
 </div>
@@ -281,24 +270,22 @@
 <span>  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/select.html" class="external-link">select</a></span><span class="op">(</span><span class="va">district_name</span>, <span class="va">n_students</span><span class="op">)</span></span>
 <span></span>
 <span><span class="va">small</span></span>
-<span><span class="co">#&gt; # A tibble: 15 x 2</span></span>
-<span><span class="co">#&gt;    district_name               n_students</span></span>
-<span><span class="co">#&gt;    &lt;chr&gt;                            &lt;dbl&gt;</span></span>
-<span><span class="co">#&gt;  1 Edgemont School District            94</span></span>
-<span><span class="co">#&gt;  2 Harding County School Dist...      107</span></span>
-<span><span class="co">#&gt;  3 Kadoka Area School District        116</span></span>
-<span><span class="co">#&gt;  4 Colome Consolidated School...      118</span></span>
-<span><span class="co">#&gt;  5 Jones County School District       122</span></span>
-<span><span class="co">#&gt;  6 Bison School District              129</span></span>
-<span><span class="co">#&gt;  7 Oelrichs School District           133</span></span>
-<span><span class="co">#&gt;  8 Smee School District               138</span></span>
-<span><span class="co">#&gt;  9 Alcester-Hudson School Dis...      145</span></span>
-<span><span class="co">#&gt; 10 Wall School District               151</span></span>
-<span><span class="co">#&gt; 11 Dupree School District             158</span></span>
-<span><span class="co">#&gt; 12 Lyman School District              162</span></span>
-<span><span class="co">#&gt; 13 Newell School District             164</span></span>
-<span><span class="co">#&gt; 14 New Underwood School Distr...      172</span></span>
-<span><span class="co">#&gt; 15 Agar-Blunt-Onida School Di...      175</span></span></code></pre></div>
+<span><span class="co">#&gt;         district_name n_students</span></span>
+<span><span class="co">#&gt; 1   Elk Mountain 16-2         20</span></span>
+<span><span class="co">#&gt; 2         Bowdle 22-1         45</span></span>
+<span><span class="co">#&gt; 3  South Central 26-5         52</span></span>
+<span><span class="co">#&gt; 4          Hoven 53-2        101</span></span>
+<span><span class="co">#&gt; 5       Edgemont 23-1        106</span></span>
+<span><span class="co">#&gt; 6       Oelrichs 23-3        117</span></span>
+<span><span class="co">#&gt; 7          Bison 52-1        118</span></span>
+<span><span class="co">#&gt; 8     White Lake 01-3        122</span></span>
+<span><span class="co">#&gt; 9       McIntosh 15-1        141</span></span>
+<span><span class="co">#&gt; 10        Doland 56-2        146</span></span>
+<span><span class="co">#&gt; 11        Colome 59-3        153</span></span>
+<span><span class="co">#&gt; 12       Herreid 10-1        153</span></span>
+<span><span class="co">#&gt; 13         Henry 14-2        154</span></span>
+<span><span class="co">#&gt; 14       Wakpala 15-3        159</span></span>
+<span><span class="co">#&gt; 15 Tripp-Delmont 33-5        160</span></span></code></pre></div>
 <hr>
 </div>
 <div class="section level2">
@@ -317,18 +304,8 @@
 <span>  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/select.html" class="external-link">select</a></span><span class="op">(</span><span class="va">end_year</span>, <span class="va">n_students</span>, <span class="va">pct</span><span class="op">)</span></span>
 <span></span>
 <span><span class="va">hispanic_trend</span></span>
-<span><span class="co">#&gt; # A tibble: 9 x 3</span></span>
-<span><span class="co">#&gt;   end_year n_students   pct</span></span>
-<span><span class="co">#&gt;      &lt;dbl&gt;      &lt;dbl&gt; &lt;dbl&gt;</span></span>
-<span><span class="co">#&gt; 1     2015       5812  4.37</span></span>
-<span><span class="co">#&gt; 2     2016       6118  4.56</span></span>
-<span><span class="co">#&gt; 3     2017       6510  4.82</span></span>
-<span><span class="co">#&gt; 4     2018       6899  5.05</span></span>
-<span><span class="co">#&gt; 5     2019       7287  5.29</span></span>
-<span><span class="co">#&gt; 6     2020       7615  5.48</span></span>
-<span><span class="co">#&gt; 7     2022       8109  5.78</span></span>
-<span><span class="co">#&gt; 8     2023       8236  5.87</span></span>
-<span><span class="co">#&gt; 9     2025       8453  6</span></span></code></pre></div>
+<span><span class="co">#&gt; [1] end_year   n_students pct</span></span>
+<span><span class="co">#&gt; &lt;0 rows&gt; (or 0-length row.names)</span></span></code></pre></div>
 <div class="float">
 <img src="https://almartin82.github.io/sdschooldata/articles/enrollment_hooks_files/figure-html/growth-chart-1.png" alt="Hispanic growth chart"><div class="figcaption">Hispanic growth chart</div>
 </div>
@@ -347,21 +324,19 @@
 <span>  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/select.html" class="external-link">select</a></span><span class="op">(</span><span class="va">end_year</span>, <span class="va">district_name</span>, <span class="va">n_students</span><span class="op">)</span></span>
 <span></span>
 <span><span class="va">suburb_trend</span></span>
-<span><span class="co">#&gt; # A tibble: 12 x 3</span></span>
-<span><span class="co">#&gt;    end_year district_name              n_students</span></span>
-<span><span class="co">#&gt;       &lt;dbl&gt; &lt;chr&gt;                           &lt;dbl&gt;</span></span>
-<span><span class="co">#&gt;  1     2011 Harrisburg School District       2782</span></span>
-<span><span class="co">#&gt;  2     2011 Brandon Valley School Dist...    4378</span></span>
-<span><span class="co">#&gt;  3     2011 Tea Area School District         1671</span></span>
-<span><span class="co">#&gt;  4     2015 Harrisburg School District       4286</span></span>
-<span><span class="co">#&gt;  5     2015 Brandon Valley School Dist...    4776</span></span>
-<span><span class="co">#&gt;  6     2015 Tea Area School District         2138</span></span>
-<span><span class="co">#&gt;  7     2020 Harrisburg School District       6436</span></span>
-<span><span class="co">#&gt;  8     2020 Brandon Valley School Dist...    5139</span></span>
-<span><span class="co">#&gt;  9     2020 Tea Area School District         3012</span></span>
-<span><span class="co">#&gt; 10     2025 Harrisburg School District       8127</span></span>
-<span><span class="co">#&gt; 11     2025 Brandon Valley School Dist...    5421</span></span>
-<span><span class="co">#&gt; 12     2025 Tea Area School District         3881</span></span></code></pre></div>
+<span><span class="co">#&gt;    end_year                 district_name n_students</span></span>
+<span><span class="co">#&gt; 1      2011           Brandon Valley 49-2       3364</span></span>
+<span><span class="co">#&gt; 2      2011               Harrisburg 41-2       2724</span></span>
+<span><span class="co">#&gt; 3      2011 Tea Area School District 41-5       1383</span></span>
+<span><span class="co">#&gt; 4      2015               Harrisburg 41-2       3900</span></span>
+<span><span class="co">#&gt; 5      2015                 Tea Area 41-5       1610</span></span>
+<span><span class="co">#&gt; 6      2015           Brandon Valley 49-2       3750</span></span>
+<span><span class="co">#&gt; 7      2020           Brandon Valley 49-2       4682</span></span>
+<span><span class="co">#&gt; 8      2020               Harrisburg 41-2       5449</span></span>
+<span><span class="co">#&gt; 9      2020                 Tea Area 41-5       2045</span></span>
+<span><span class="co">#&gt; 10     2025           Brandon Valley 49-2       5206</span></span>
+<span><span class="co">#&gt; 11     2025               Harrisburg 41-2       6398</span></span>
+<span><span class="co">#&gt; 12     2025                 Tea Area 41-5       2514</span></span></code></pre></div>
 <div class="float">
 <img src="https://almartin82.github.io/sdschooldata/articles/enrollment_hooks_files/figure-html/suburban-growth-chart-1.png" alt="Suburban growth chart"><div class="figcaption">Suburban growth chart</div>
 </div>
@@ -380,20 +355,18 @@
 <span>  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/select.html" class="external-link">select</a></span><span class="op">(</span><span class="va">end_year</span>, <span class="va">n_students</span><span class="op">)</span></span>
 <span></span>
 <span><span class="va">rapid_trend</span></span>
-<span><span class="co">#&gt; # A tibble: 11 x 2</span></span>
 <span><span class="co">#&gt;    end_year n_students</span></span>
-<span><span class="co">#&gt;       &lt;dbl&gt;      &lt;dbl&gt;</span></span>
-<span><span class="co">#&gt;  1     2015      13489</span></span>
-<span><span class="co">#&gt;  2     2016      13629</span></span>
-<span><span class="co">#&gt;  3     2017      13773</span></span>
-<span><span class="co">#&gt;  4     2018      13914</span></span>
-<span><span class="co">#&gt;  5     2019      14052</span></span>
-<span><span class="co">#&gt;  6     2020      14115</span></span>
-<span><span class="co">#&gt;  7     2021      13987</span></span>
-<span><span class="co">#&gt;  8     2022      14021</span></span>
-<span><span class="co">#&gt;  9     2023      14089</span></span>
-<span><span class="co">#&gt; 10     2024      14156</span></span>
-<span><span class="co">#&gt; 11     2025      14234</span></span></code></pre></div>
+<span><span class="co">#&gt; 1      2015      13743</span></span>
+<span><span class="co">#&gt; 2      2016      13743</span></span>
+<span><span class="co">#&gt; 3      2017      13760</span></span>
+<span><span class="co">#&gt; 4      2018      13832</span></span>
+<span><span class="co">#&gt; 5      2019      13609</span></span>
+<span><span class="co">#&gt; 6      2020      12809</span></span>
+<span><span class="co">#&gt; 7      2021       1090</span></span>
+<span><span class="co">#&gt; 8      2022      12743</span></span>
+<span><span class="co">#&gt; 9      2023      12433</span></span>
+<span><span class="co">#&gt; 10     2024      12313</span></span>
+<span><span class="co">#&gt; 11     2025      12040</span></span></code></pre></div>
 <div class="float">
 <img src="https://almartin82.github.io/sdschooldata/articles/enrollment_hooks_files/figure-html/rapid-city-chart-1.png" alt="Rapid City chart"><div class="figcaption">Rapid City chart</div>
 </div>
@@ -413,21 +386,27 @@
 <span>         <span class="va">grade_level</span> <span class="op">==</span> <span class="st">"TOTAL"</span><span class="op">)</span></span>
 <span></span>
 <span><span class="va">res_data</span></span>
-<span><span class="co">#&gt; # A tibble: 12 x 9</span></span>
-<span><span class="co">#&gt;    end_year district_id district_name                   campus_id campus_name type     grade_level subgroup         n_students</span></span>
-<span><span class="co">#&gt;       &lt;dbl&gt; &lt;chr&gt;       &lt;chr&gt;                           &lt;chr&gt;     &lt;chr&gt;       &lt;chr&gt;    &lt;chr&gt;       &lt;chr&gt;                 &lt;dbl&gt;</span></span>
-<span><span class="co">#&gt;  1     2015 63003       Todd County School District     NA        NA          District TOTAL       total_enrollment       1832</span></span>
-<span><span class="co">#&gt;  2     2015 63003       Todd County School District     NA        NA          District TOTAL       native_american        1687</span></span>
-<span><span class="co">#&gt;  3     2015 65001       Oglala Lakota County School...  NA        NA          District TOTAL       total_enrollment       2015</span></span>
-<span><span class="co">#&gt;  4     2015 65001       Oglala Lakota County School...  NA        NA          District TOTAL       native_american        1923</span></span>
-<span><span class="co">#&gt;  5     2020 63003       Todd County School District     NA        NA          District TOTAL       total_enrollment       1789</span></span>
-<span><span class="co">#&gt;  6     2020 63003       Todd County School District     NA        NA          District TOTAL       native_american        1644</span></span>
-<span><span class="co">#&gt;  7     2020 65001       Oglala Lakota County School...  NA        NA          District TOTAL       total_enrollment       1876</span></span>
-<span><span class="co">#&gt;  8     2020 65001       Oglala Lakota County School...  NA        NA          District TOTAL       native_american        1798</span></span>
-<span><span class="co">#&gt;  9     2025 63003       Todd County School District     NA        NA          District TOTAL       total_enrollment       1712</span></span>
-<span><span class="co">#&gt; 10     2025 63003       Todd County School District     NA        NA          District TOTAL       native_american        1578</span></span>
-<span><span class="co">#&gt; 11     2025 65001       Oglala Lakota County School...  NA        NA          District TOTAL       total_enrollment       1784</span></span>
-<span><span class="co">#&gt; 12     2025 65001       Oglala Lakota County School...  NA        NA          District TOTAL       native_american        1701</span></span></code></pre></div>
+<span><span class="co">#&gt;   end_year     type district_id campus_id             district_name campus_name</span></span>
+<span><span class="co">#&gt; 1     2015 District       65001      &lt;NA&gt; Oglala Lakota County 65-1        &lt;NA&gt;</span></span>
+<span><span class="co">#&gt; 2     2015 District       66001      &lt;NA&gt;          Todd County 66-1        &lt;NA&gt;</span></span>
+<span><span class="co">#&gt; 3     2020 District       65001      &lt;NA&gt;        Oglala Lakota 65-1        &lt;NA&gt;</span></span>
+<span><span class="co">#&gt; 4     2020 District       66001      &lt;NA&gt;          Todd County 66-1        &lt;NA&gt;</span></span>
+<span><span class="co">#&gt; 5     2025 District       65001      &lt;NA&gt; Oglala Lakota County 65-1        &lt;NA&gt;</span></span>
+<span><span class="co">#&gt; 6     2025 District       66001      &lt;NA&gt;          Todd County 66-1        &lt;NA&gt;</span></span>
+<span><span class="co">#&gt;   grade_level         subgroup n_students pct is_state is_district is_campus</span></span>
+<span><span class="co">#&gt; 1       TOTAL total_enrollment       1532   1    FALSE        TRUE     FALSE</span></span>
+<span><span class="co">#&gt; 2       TOTAL total_enrollment       2013   1    FALSE        TRUE     FALSE</span></span>
+<span><span class="co">#&gt; 3       TOTAL total_enrollment       1811   1    FALSE        TRUE     FALSE</span></span>
+<span><span class="co">#&gt; 4       TOTAL total_enrollment       2156   1    FALSE        TRUE     FALSE</span></span>
+<span><span class="co">#&gt; 5       TOTAL total_enrollment       1706   1    FALSE        TRUE     FALSE</span></span>
+<span><span class="co">#&gt; 6       TOTAL total_enrollment       1956   1    FALSE        TRUE     FALSE</span></span>
+<span><span class="co">#&gt;   is_public district_type_code district_type_name</span></span>
+<span><span class="co">#&gt; 1      TRUE               &lt;NA&gt;               &lt;NA&gt;</span></span>
+<span><span class="co">#&gt; 2      TRUE               &lt;NA&gt;               &lt;NA&gt;</span></span>
+<span><span class="co">#&gt; 3      TRUE               &lt;NA&gt;               &lt;NA&gt;</span></span>
+<span><span class="co">#&gt; 4      TRUE               &lt;NA&gt;               &lt;NA&gt;</span></span>
+<span><span class="co">#&gt; 5      TRUE                 10        10 - Public</span></span>
+<span><span class="co">#&gt; 6      TRUE                 10        10 - Public</span></span></code></pre></div>
 <div class="float">
 <img src="https://almartin82.github.io/sdschooldata/articles/enrollment_hooks_files/figure-html/reservation-chart-1.png" alt="Reservation schools chart"><div class="figcaption">Reservation schools chart</div>
 </div>
@@ -448,11 +427,10 @@
 <span>  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/select.html" class="external-link">select</a></span><span class="op">(</span><span class="va">district_name</span>, <span class="va">n_students</span><span class="op">)</span></span>
 <span></span>
 <span><span class="va">tiny_districts</span></span>
-<span><span class="co">#&gt; # A tibble: 20 x 2</span></span>
-<span><span class="co">#&gt;    district_name               n_students</span></span>
-<span><span class="co">#&gt;    &lt;chr&gt;                            &lt;dbl&gt;</span></span>
-<span><span class="co">#&gt;  1 Edgemont School District            94</span></span>
-<span><span class="co">#&gt;  ... (districts with &lt;100 students)</span></span></code></pre></div>
+<span><span class="co">#&gt;        district_name n_students</span></span>
+<span><span class="co">#&gt; 1  Elk Mountain 16-2         20</span></span>
+<span><span class="co">#&gt; 2        Bowdle 22-1         45</span></span>
+<span><span class="co">#&gt; 3 South Central 26-5         52</span></span></code></pre></div>
 <div class="float">
 <img src="https://almartin82.github.io/sdschooldata/articles/enrollment_hooks_files/figure-html/rural-distribution-chart-1.png" alt="Rural distribution chart"><div class="figcaption">Rural distribution chart</div>
 </div>
@@ -472,11 +450,8 @@
 <span>  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/mutate.html" class="external-link">mutate</a></span><span class="op">(</span>pct <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/Round.html" class="external-link">round</a></span><span class="op">(</span><span class="va">pct</span> <span class="op">*</span> <span class="fl">100</span>, <span class="fl">1</span><span class="op">)</span><span class="op">)</span></span>
 <span></span>
 <span><span class="va">gender_state</span></span>
-<span><span class="co">#&gt; # A tibble: 2 x 3</span></span>
-<span><span class="co">#&gt;   subgroup n_students   pct</span></span>
-<span><span class="co">#&gt;   &lt;chr&gt;         &lt;dbl&gt; &lt;dbl&gt;</span></span>
-<span><span class="co">#&gt; 1 female        68542  48.7</span></span>
-<span><span class="co">#&gt; 2 male          72334  51.3</span></span></code></pre></div>
+<span><span class="co">#&gt; [1] subgroup   n_students pct</span></span>
+<span><span class="co">#&gt; &lt;0 rows&gt; (or 0-length row.names)</span></span></code></pre></div>
 <div class="float">
 <img src="https://almartin82.github.io/sdschooldata/articles/enrollment_hooks_files/figure-html/gender-chart-1.png" alt="Gender chart"><div class="figcaption">Gender chart</div>
 </div>
@@ -496,15 +471,12 @@
 <span>  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/select.html" class="external-link">select</a></span><span class="op">(</span><span class="va">district_name</span>, <span class="va">n_students</span><span class="op">)</span></span>
 <span></span>
 <span><span class="va">bh_districts</span></span>
-<span><span class="co">#&gt; # A tibble: 6 x 2</span></span>
-<span><span class="co">#&gt;   district_name                   n_students</span></span>
-<span><span class="co">#&gt;   &lt;chr&gt;                                &lt;dbl&gt;</span></span>
-<span><span class="co">#&gt; 1 Rapid City Area School Dist...       14234</span></span>
-<span><span class="co">#&gt; 2 Spearfish School District             2289</span></span>
-<span><span class="co">#&gt; 3 Belle Fourche School District         1156</span></span>
-<span><span class="co">#&gt; 4 Sturgis School District               1089</span></span>
-<span><span class="co">#&gt; 5 Custer School District                 678</span></span>
-<span><span class="co">#&gt; 6 Lead-Deadwood School District          542</span></span></code></pre></div>
+<span><span class="co">#&gt;          district_name n_students</span></span>
+<span><span class="co">#&gt; 1 Rapid City Area 51-4      12040</span></span>
+<span><span class="co">#&gt; 2       Spearfish 40-2       2301</span></span>
+<span><span class="co">#&gt; 3   Belle Fourche 09-1       1241</span></span>
+<span><span class="co">#&gt; 4          Custer 16-1        854</span></span>
+<span><span class="co">#&gt; 5   Lead-Deadwood 40-1        590</span></span></code></pre></div>
 <div class="float">
 <img src="https://almartin82.github.io/sdschooldata/articles/enrollment_hooks_files/figure-html/black-hills-chart-1.png" alt="Black Hills chart"><div class="figcaption">Black Hills chart</div>
 </div>
@@ -523,20 +495,17 @@
 <span>  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/select.html" class="external-link">select</a></span><span class="op">(</span><span class="va">end_year</span>, <span class="va">n_students</span><span class="op">)</span></span>
 <span></span>
 <span><span class="va">ne_trend</span></span>
-<span><span class="co">#&gt; # A tibble: 11 x 2</span></span>
 <span><span class="co">#&gt;    end_year n_students</span></span>
-<span><span class="co">#&gt;       &lt;dbl&gt;      &lt;dbl&gt;</span></span>
-<span><span class="co">#&gt;  1     2015       3775</span></span>
-<span><span class="co">#&gt;  2     2016       3803</span></span>
-<span><span class="co">#&gt;  3     2017       3842</span></span>
-<span><span class="co">#&gt;  4     2018       3878</span></span>
-<span><span class="co">#&gt;  5     2019       3901</span></span>
-<span><span class="co">#&gt;  6     2020       3925</span></span>
-<span><span class="co">#&gt;  7     2021       3912</span></span>
-<span><span class="co">#&gt;  8     2022       3934</span></span>
-<span><span class="co">#&gt;  9     2023       3948</span></span>
-<span><span class="co">#&gt; 10     2024       3956</span></span>
-<span><span class="co">#&gt; 11     2025       3962</span></span></code></pre></div>
+<span><span class="co">#&gt; 1      2015       4485</span></span>
+<span><span class="co">#&gt; 2      2016       4554</span></span>
+<span><span class="co">#&gt; 3      2017       4517</span></span>
+<span><span class="co">#&gt; 4      2018       4471</span></span>
+<span><span class="co">#&gt; 5      2019       4483</span></span>
+<span><span class="co">#&gt; 6      2020       4477</span></span>
+<span><span class="co">#&gt; 7      2022       4326</span></span>
+<span><span class="co">#&gt; 8      2023       4265</span></span>
+<span><span class="co">#&gt; 9      2024       4237</span></span>
+<span><span class="co">#&gt; 10     2025       4134</span></span></code></pre></div>
 <div class="float">
 <img src="https://almartin82.github.io/sdschooldata/articles/enrollment_hooks_files/figure-html/northeast-chart-1.png" alt="Northeast chart"><div class="figcaption">Northeast chart</div>
 </div>
@@ -557,15 +526,22 @@
 <span>  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/select.html" class="external-link">select</a></span><span class="op">(</span><span class="va">district_name</span>, <span class="va">n_students</span><span class="op">)</span></span>
 <span></span>
 <span><span class="va">prek_data</span></span>
-<span><span class="co">#&gt; # A tibble: 15 x 2</span></span>
-<span><span class="co">#&gt;    district_name               n_students</span></span>
-<span><span class="co">#&gt;    &lt;chr&gt;                            &lt;dbl&gt;</span></span>
-<span><span class="co">#&gt;  1 Sioux Falls School District       1892</span></span>
-<span><span class="co">#&gt;  2 Rapid City Area School Dis...     1023</span></span>
-<span><span class="co">#&gt;  3 Harrisburg School District         589</span></span>
-<span><span class="co">#&gt;  4 Brandon Valley School Dist...      378</span></span>
-<span><span class="co">#&gt;  5 Watertown School District          312</span></span>
-<span><span class="co">#&gt;  ... (more districts)</span></span></code></pre></div>
+<span><span class="co">#&gt;                district_name n_students</span></span>
+<span><span class="co">#&gt; 1           Sioux Falls 49-5        791</span></span>
+<span><span class="co">#&gt; 2               Yankton 63-3        196</span></span>
+<span><span class="co">#&gt; 3       Rapid City Area 51-4        165</span></span>
+<span><span class="co">#&gt; 4      Wagner Community 11-4        105</span></span>
+<span><span class="co">#&gt; 5  Oglala Lakota County 65-1         79</span></span>
+<span><span class="co">#&gt; 6                Lennox 41-4         59</span></span>
+<span><span class="co">#&gt; 7             Watertown 14-4         59</span></span>
+<span><span class="co">#&gt; 8                Hamlin 28-3         55</span></span>
+<span><span class="co">#&gt; 9               Douglas 51-1         53</span></span>
+<span><span class="co">#&gt; 10       Brandon Valley 49-2         51</span></span>
+<span><span class="co">#&gt; 11           Harrisburg 41-2         43</span></span>
+<span><span class="co">#&gt; 12       McCook Central 43-7         43</span></span>
+<span><span class="co">#&gt; 13            Brookings 05-1         40</span></span>
+<span><span class="co">#&gt; 14      Alcester-Hudson 61-1         37</span></span>
+<span><span class="co">#&gt; 15            Garretson 49-4         36</span></span></code></pre></div>
 <div class="float">
 <img src="https://almartin82.github.io/sdschooldata/articles/enrollment_hooks_files/figure-html/prek-chart-1.png" alt="Pre-K chart"><div class="figcaption">Pre-K chart</div>
 </div>
@@ -584,13 +560,8 @@
 <span>  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/mutate.html" class="external-link">mutate</a></span><span class="op">(</span>pct <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/Round.html" class="external-link">round</a></span><span class="op">(</span><span class="va">pct</span> <span class="op">*</span> <span class="fl">100</span>, <span class="fl">2</span><span class="op">)</span><span class="op">)</span></span>
 <span></span>
 <span><span class="va">multi_trend</span></span>
-<span><span class="co">#&gt; # A tibble: 4 x 3</span></span>
-<span><span class="co">#&gt;   end_year n_students   pct</span></span>
-<span><span class="co">#&gt;      &lt;dbl&gt;      &lt;dbl&gt; &lt;dbl&gt;</span></span>
-<span><span class="co">#&gt; 1     2015       4412  3.32</span></span>
-<span><span class="co">#&gt; 2     2018       5234  3.84</span></span>
-<span><span class="co">#&gt; 3     2022       6312  4.5</span></span>
-<span><span class="co">#&gt; 4     2025       6892  4.89</span></span></code></pre></div>
+<span><span class="co">#&gt; [1] end_year   n_students pct</span></span>
+<span><span class="co">#&gt; &lt;0 rows&gt; (or 0-length row.names)</span></span></code></pre></div>
 <div class="float">
 <img src="https://almartin82.github.io/sdschooldata/articles/enrollment_hooks_files/figure-html/multiracial-chart-1.png" alt="Multiracial chart"><div class="figcaption">Multiracial chart</div>
 </div>

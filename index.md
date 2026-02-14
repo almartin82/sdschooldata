@@ -53,7 +53,7 @@ enr <- fetch_enr(2025)
 enr |>
   filter(is_state, subgroup == "total_enrollment", grade_level == "TOTAL") |>
   pull(n_students)
-#> 140,876
+#> 138,861
 
 # Top 10 districts
 enr |>
@@ -77,7 +77,7 @@ enr = sd.fetch_enr(2025)
 # Statewide total
 total = enr[(enr['is_state'] == True) & (enr['subgroup'] == 'total_enrollment') & (enr['grade_level'] == 'TOTAL')]['n_students'].sum()
 print(f"{total:,} students")
-#> 140,876 students
+#> 138,861 students
 
 # Get multiple years
 enr_multi = sd.fetch_enr_multi([2020, 2021, 2022, 2023, 2024, 2025])
@@ -122,18 +122,17 @@ state_totals <- enr |>
          pct_change = round(change / lag(n_students) * 100, 2))
 
 state_totals
-#> # A tibble: 9 x 4
-#>   end_year n_students change pct_change
-#>      <dbl>      <dbl>  <dbl>      <dbl>
-#> 1     2015     132867     NA      NA
-#> 2     2016     134063   1196       0.9
-#> 3     2017     135178   1115       0.83
-#> 4     2018     136476   1298       0.96
-#> 5     2019     137860   1384       1.01
-#> 6     2020     138930   1070       0.78
-#> 7     2022     140188   1258       0.91
-#> 8     2023     140430    242       0.17
-#> 9     2025     140876    446       0.32
+#>    end_year n_students change pct_change
+#> 1      2015     134054     NA         NA
+#> 2      2016     135811   1757       1.31
+#> 3      2017     137251   1440       1.06
+#> 4      2018     138428   1177       0.86
+#> 5      2019     139442   1014       0.73
+#> 6      2020     139154   -288      -0.21
+#> 7      2022     141429   2275       1.63
+#> 8      2023     141005   -424      -0.30
+#> 9      2024     140587   -418      -0.30
+#> 10     2025     138861  -1726      -1.23
 ```
 
 ![Statewide enrollment
@@ -159,19 +158,17 @@ top_10 <- enr_2025 |>
   select(district_name, n_students)
 
 top_10
-#> # A tibble: 10 x 2
-#>    district_name              n_students
-#>    <chr>                           <dbl>
-#>  1 Sioux Falls School District     26478
-#>  2 Rapid City Area School Dis...   14234
-#>  3 Harrisburg School District       8127
-#>  4 Brandon Valley School Dist...    5421
-#>  5 Watertown School District        4385
-#>  6 Aberdeen School District         3962
-#>  7 Tea Area School District         3881
-#>  8 Brookings School District        3234
-#>  9 Mitchell School District         2687
-#> 10 Pierre School District           2519
+#>           district_name n_students
+#> 1      Sioux Falls 49-5      24841
+#> 2  Rapid City Area 51-4      12040
+#> 3       Harrisburg 41-2       6398
+#> 4   Brandon Valley 49-2       5206
+#> 5         Aberdeen 06-1       4134
+#> 6        Brookings 05-1       3483
+#> 7        Watertown 14-4       3425
+#> 8            Huron 02-2       3042
+#> 9          Yankton 63-3       2973
+#> 10           Meade 46-1       2957
 ```
 
 ![Top 10
@@ -196,15 +193,8 @@ demographics <- enr_2025 |>
   arrange(desc(n_students))
 
 demographics
-#> # A tibble: 6 x 3
-#>   subgroup        n_students   pct
-#>   <chr>                <dbl> <dbl>
-#> 1 white               104298  74
-#> 2 native_american      15987  11.3
-#> 3 hispanic              8453   6
-#> 4 multiracial           6892   4.9
-#> 5 black                 3152   2.2
-#> 6 asian                 2094   1.5
+#> [1] subgroup   n_students pct
+#> <0 rows> (or 0-length row.names)
 ```
 
 ![Demographics
@@ -233,14 +223,13 @@ urban_growth <- enr |>
   arrange(desc(pct_change))
 
 urban_growth
-#> # A tibble: 5 x 4
-#>   district_name                   y2015 y2025 pct_change
-#>   <chr>                           <dbl> <dbl>      <dbl>
-#> 1 Sioux Falls School District     23567 26478       12.4
-#> 2 Watertown School District        3833  4385       14.4
-#> 3 Brookings School District        3030  3234        6.7
-#> 4 Aberdeen School District         3775  3962        5
-#> 5 Rapid City Area School Dist...  13489 14234        5.5
+#> # A tibble: 4 x 4
+#>   district_name    y2015 y2025 pct_change
+#>   <chr>            <dbl> <dbl>      <dbl>
+#> 1 Brookings 05-1    3351  3483        3.9
+#> 2 Sioux Falls 49-5 24216 24841        2.6
+#> 3 Aberdeen 06-1     4485  4134       -7.8
+#> 4 Watertown 14-4    4016  3425      -14.7
 ```
 
 ![Urban growth
@@ -265,24 +254,22 @@ small <- enr_2025 |>
   select(district_name, n_students)
 
 small
-#> # A tibble: 15 x 2
-#>    district_name               n_students
-#>    <chr>                            <dbl>
-#>  1 Edgemont School District            94
-#>  2 Harding County School Dist...      107
-#>  3 Kadoka Area School District        116
-#>  4 Colome Consolidated School...      118
-#>  5 Jones County School District       122
-#>  6 Bison School District              129
-#>  7 Oelrichs School District           133
-#>  8 Smee School District               138
-#>  9 Alcester-Hudson School Dis...      145
-#> 10 Wall School District               151
-#> 11 Dupree School District             158
-#> 12 Lyman School District              162
-#> 13 Newell School District             164
-#> 14 New Underwood School Distr...      172
-#> 15 Agar-Blunt-Onida School Di...      175
+#>         district_name n_students
+#> 1   Elk Mountain 16-2         20
+#> 2         Bowdle 22-1         45
+#> 3  South Central 26-5         52
+#> 4          Hoven 53-2        101
+#> 5       Edgemont 23-1        106
+#> 6       Oelrichs 23-3        117
+#> 7          Bison 52-1        118
+#> 8     White Lake 01-3        122
+#> 9       McIntosh 15-1        141
+#> 10        Doland 56-2        146
+#> 11        Colome 59-3        153
+#> 12       Herreid 10-1        153
+#> 13         Henry 14-2        154
+#> 14       Wakpala 15-3        159
+#> 15 Tripp-Delmont 33-5        160
 ```
 
 ------------------------------------------------------------------------
@@ -305,18 +292,8 @@ hispanic_trend <- enr_full |>
   select(end_year, n_students, pct)
 
 hispanic_trend
-#> # A tibble: 9 x 3
-#>   end_year n_students   pct
-#>      <dbl>      <dbl> <dbl>
-#> 1     2015       5812  4.37
-#> 2     2016       6118  4.56
-#> 3     2017       6510  4.82
-#> 4     2018       6899  5.05
-#> 5     2019       7287  5.29
-#> 6     2020       7615  5.48
-#> 7     2022       8109  5.78
-#> 8     2023       8236  5.87
-#> 9     2025       8453  6
+#> [1] end_year   n_students pct
+#> <0 rows> (or 0-length row.names)
 ```
 
 ![Hispanic growth
@@ -340,21 +317,19 @@ suburb_trend <- suburbs |>
   select(end_year, district_name, n_students)
 
 suburb_trend
-#> # A tibble: 12 x 3
-#>    end_year district_name              n_students
-#>       <dbl> <chr>                           <dbl>
-#>  1     2011 Harrisburg School District       2782
-#>  2     2011 Brandon Valley School Dist...    4378
-#>  3     2011 Tea Area School District         1671
-#>  4     2015 Harrisburg School District       4286
-#>  5     2015 Brandon Valley School Dist...    4776
-#>  6     2015 Tea Area School District         2138
-#>  7     2020 Harrisburg School District       6436
-#>  8     2020 Brandon Valley School Dist...    5139
-#>  9     2020 Tea Area School District         3012
-#> 10     2025 Harrisburg School District       8127
-#> 11     2025 Brandon Valley School Dist...    5421
-#> 12     2025 Tea Area School District         3881
+#>    end_year                 district_name n_students
+#> 1      2011           Brandon Valley 49-2       3364
+#> 2      2011               Harrisburg 41-2       2724
+#> 3      2011 Tea Area School District 41-5       1383
+#> 4      2015               Harrisburg 41-2       3900
+#> 5      2015                 Tea Area 41-5       1610
+#> 6      2015           Brandon Valley 49-2       3750
+#> 7      2020           Brandon Valley 49-2       4682
+#> 8      2020               Harrisburg 41-2       5449
+#> 9      2020                 Tea Area 41-5       2045
+#> 10     2025           Brandon Valley 49-2       5206
+#> 11     2025               Harrisburg 41-2       6398
+#> 12     2025                 Tea Area 41-5       2514
 ```
 
 ![Suburban growth
@@ -378,20 +353,18 @@ rapid_trend <- rapid |>
   select(end_year, n_students)
 
 rapid_trend
-#> # A tibble: 11 x 2
 #>    end_year n_students
-#>       <dbl>      <dbl>
-#>  1     2015      13489
-#>  2     2016      13629
-#>  3     2017      13773
-#>  4     2018      13914
-#>  5     2019      14052
-#>  6     2020      14115
-#>  7     2021      13987
-#>  8     2022      14021
-#>  9     2023      14089
-#> 10     2024      14156
-#> 11     2025      14234
+#> 1      2015      13743
+#> 2      2016      13743
+#> 3      2017      13760
+#> 4      2018      13832
+#> 5      2019      13609
+#> 6      2020      12809
+#> 7      2021       1090
+#> 8      2022      12743
+#> 9      2023      12433
+#> 10     2024      12313
+#> 11     2025      12040
 ```
 
 ![Rapid City
@@ -417,21 +390,27 @@ res_data <- reservation |>
          grade_level == "TOTAL")
 
 res_data
-#> # A tibble: 12 x 9
-#>    end_year district_id district_name                   campus_id campus_name type     grade_level subgroup         n_students
-#>       <dbl> <chr>       <chr>                           <chr>     <chr>       <chr>    <chr>       <chr>                 <dbl>
-#>  1     2015 63003       Todd County School District     NA        NA          District TOTAL       total_enrollment       1832
-#>  2     2015 63003       Todd County School District     NA        NA          District TOTAL       native_american        1687
-#>  3     2015 65001       Oglala Lakota County School...  NA        NA          District TOTAL       total_enrollment       2015
-#>  4     2015 65001       Oglala Lakota County School...  NA        NA          District TOTAL       native_american        1923
-#>  5     2020 63003       Todd County School District     NA        NA          District TOTAL       total_enrollment       1789
-#>  6     2020 63003       Todd County School District     NA        NA          District TOTAL       native_american        1644
-#>  7     2020 65001       Oglala Lakota County School...  NA        NA          District TOTAL       total_enrollment       1876
-#>  8     2020 65001       Oglala Lakota County School...  NA        NA          District TOTAL       native_american        1798
-#>  9     2025 63003       Todd County School District     NA        NA          District TOTAL       total_enrollment       1712
-#> 10     2025 63003       Todd County School District     NA        NA          District TOTAL       native_american        1578
-#> 11     2025 65001       Oglala Lakota County School...  NA        NA          District TOTAL       total_enrollment       1784
-#> 12     2025 65001       Oglala Lakota County School...  NA        NA          District TOTAL       native_american        1701
+#>   end_year     type district_id campus_id             district_name campus_name
+#> 1     2015 District       65001      <NA> Oglala Lakota County 65-1        <NA>
+#> 2     2015 District       66001      <NA>          Todd County 66-1        <NA>
+#> 3     2020 District       65001      <NA>        Oglala Lakota 65-1        <NA>
+#> 4     2020 District       66001      <NA>          Todd County 66-1        <NA>
+#> 5     2025 District       65001      <NA> Oglala Lakota County 65-1        <NA>
+#> 6     2025 District       66001      <NA>          Todd County 66-1        <NA>
+#>   grade_level         subgroup n_students pct is_state is_district is_campus
+#> 1       TOTAL total_enrollment       1532   1    FALSE        TRUE     FALSE
+#> 2       TOTAL total_enrollment       2013   1    FALSE        TRUE     FALSE
+#> 3       TOTAL total_enrollment       1811   1    FALSE        TRUE     FALSE
+#> 4       TOTAL total_enrollment       2156   1    FALSE        TRUE     FALSE
+#> 5       TOTAL total_enrollment       1706   1    FALSE        TRUE     FALSE
+#> 6       TOTAL total_enrollment       1956   1    FALSE        TRUE     FALSE
+#>   is_public district_type_code district_type_name
+#> 1      TRUE               <NA>               <NA>
+#> 2      TRUE               <NA>               <NA>
+#> 3      TRUE               <NA>               <NA>
+#> 4      TRUE               <NA>               <NA>
+#> 5      TRUE                 10        10 - Public
+#> 6      TRUE                 10        10 - Public
 ```
 
 ![Reservation schools
@@ -457,11 +436,10 @@ tiny_districts <- tiny |>
   select(district_name, n_students)
 
 tiny_districts
-#> # A tibble: 20 x 2
-#>    district_name               n_students
-#>    <chr>                            <dbl>
-#>  1 Edgemont School District            94
-#>  ... (districts with <100 students)
+#>        district_name n_students
+#> 1  Elk Mountain 16-2         20
+#> 2        Bowdle 22-1         45
+#> 3 South Central 26-5         52
 ```
 
 ![Rural distribution
@@ -486,11 +464,8 @@ gender_state <- gender |>
   mutate(pct = round(pct * 100, 1))
 
 gender_state
-#> # A tibble: 2 x 3
-#>   subgroup n_students   pct
-#>   <chr>         <dbl> <dbl>
-#> 1 female        68542  48.7
-#> 2 male          72334  51.3
+#> [1] subgroup   n_students pct
+#> <0 rows> (or 0-length row.names)
 ```
 
 ![Gender
@@ -516,15 +491,12 @@ bh_districts <- black_hills |>
   select(district_name, n_students)
 
 bh_districts
-#> # A tibble: 6 x 2
-#>   district_name                   n_students
-#>   <chr>                                <dbl>
-#> 1 Rapid City Area School Dist...       14234
-#> 2 Spearfish School District             2289
-#> 3 Belle Fourche School District         1156
-#> 4 Sturgis School District               1089
-#> 5 Custer School District                 678
-#> 6 Lead-Deadwood School District          542
+#>          district_name n_students
+#> 1 Rapid City Area 51-4      12040
+#> 2       Spearfish 40-2       2301
+#> 3   Belle Fourche 09-1       1241
+#> 4          Custer 16-1        854
+#> 5   Lead-Deadwood 40-1        590
 ```
 
 ![Black Hills
@@ -548,20 +520,17 @@ ne_trend <- northeast |>
   select(end_year, n_students)
 
 ne_trend
-#> # A tibble: 11 x 2
 #>    end_year n_students
-#>       <dbl>      <dbl>
-#>  1     2015       3775
-#>  2     2016       3803
-#>  3     2017       3842
-#>  4     2018       3878
-#>  5     2019       3901
-#>  6     2020       3925
-#>  7     2021       3912
-#>  8     2022       3934
-#>  9     2023       3948
-#> 10     2024       3956
-#> 11     2025       3962
+#> 1      2015       4485
+#> 2      2016       4554
+#> 3      2017       4517
+#> 4      2018       4471
+#> 5      2019       4483
+#> 6      2020       4477
+#> 7      2022       4326
+#> 8      2023       4265
+#> 9      2024       4237
+#> 10     2025       4134
 ```
 
 ![Northeast
@@ -588,15 +557,22 @@ prek_data <- prek |>
   select(district_name, n_students)
 
 prek_data
-#> # A tibble: 15 x 2
-#>    district_name               n_students
-#>    <chr>                            <dbl>
-#>  1 Sioux Falls School District       1892
-#>  2 Rapid City Area School Dis...     1023
-#>  3 Harrisburg School District         589
-#>  4 Brandon Valley School Dist...      378
-#>  5 Watertown School District          312
-#>  ... (more districts)
+#>                district_name n_students
+#> 1           Sioux Falls 49-5        791
+#> 2               Yankton 63-3        196
+#> 3       Rapid City Area 51-4        165
+#> 4      Wagner Community 11-4        105
+#> 5  Oglala Lakota County 65-1         79
+#> 6                Lennox 41-4         59
+#> 7             Watertown 14-4         59
+#> 8                Hamlin 28-3         55
+#> 9               Douglas 51-1         53
+#> 10       Brandon Valley 49-2         51
+#> 11           Harrisburg 41-2         43
+#> 12       McCook Central 43-7         43
+#> 13            Brookings 05-1         40
+#> 14      Alcester-Hudson 61-1         37
+#> 15            Garretson 49-4         36
 ```
 
 ![Pre-K
@@ -620,13 +596,8 @@ multi_trend <- multi |>
   mutate(pct = round(pct * 100, 2))
 
 multi_trend
-#> # A tibble: 4 x 3
-#>   end_year n_students   pct
-#>      <dbl>      <dbl> <dbl>
-#> 1     2015       4412  3.32
-#> 2     2018       5234  3.84
-#> 3     2022       6312  4.5
-#> 4     2025       6892  4.89
+#> [1] end_year   n_students pct
+#> <0 rows> (or 0-length row.names)
 ```
 
 ![Multiracial

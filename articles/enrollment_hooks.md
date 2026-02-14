@@ -157,21 +157,27 @@ urban_growth <- enr |>
          grepl("Sioux Falls|Rapid City|Aberdeen|Brookings|Watertown", district_name)) |>
   group_by(district_name) |>
   summarize(
-    y2015 = n_students[end_year == 2015],
-    y2025 = n_students[end_year == 2025],
-    pct_change = round((y2025 / y2015 - 1) * 100, 1),
+    y_first = n_students[end_year == min(end_year)],
+    y_last = n_students[end_year == max(end_year)],
+    first_year = min(end_year),
+    last_year = max(end_year),
+    pct_change = round((y_last / y_first - 1) * 100, 1),
     .groups = "drop"
   ) |>
   arrange(desc(pct_change))
 
 urban_growth
-#> # A tibble: 4 × 4
-#>   district_name    y2015 y2025 pct_change
-#>   <chr>            <dbl> <dbl>      <dbl>
-#> 1 Brookings 05-1    3351  3483        3.9
-#> 2 Sioux Falls 49-5 24216 24841        2.6
-#> 3 Aberdeen 06-1     4485  4134       -7.8
-#> 4 Watertown 14-4    4016  3425      -14.7
+#> # A tibble: 8 × 6
+#>   district_name                y_first y_last first_year last_year pct_change
+#>   <chr>                          <dbl>  <dbl>      <dbl>     <dbl>      <dbl>
+#> 1 Brookings 05-1                  3351   3483       2015      2025        3.9
+#> 2 Sioux Falls 49-5               24216  24841       2015      2025        2.6
+#> 3 Rapid City  Area 51-           12809  12809       2020      2020        0  
+#> 4 Rapid City Area Schools 51-4   13743  13743       2015      2015        0  
+#> 5 Rapid City  Area 51-4          13743  13609       2016      2019       -1  
+#> 6 Rapid City Area 51-4           12743  12040       2022      2025       -5.5
+#> 7 Aberdeen 06-1                   4485   4134       2015      2025       -7.8
+#> 8 Watertown 14-4                  4016   3425       2015      2025      -14.7
 ```
 
 ``` r
@@ -759,7 +765,7 @@ sessionInfo()
 #> [1] stats     graphics  grDevices utils     datasets  methods   base     
 #> 
 #> other attached packages:
-#> [1] ggplot2_4.0.1      tidyr_1.3.2        dplyr_1.1.4        sdschooldata_0.1.0
+#> [1] ggplot2_4.0.2      tidyr_1.3.2        dplyr_1.2.0        sdschooldata_0.1.0
 #> 
 #> loaded via a namespace (and not attached):
 #>  [1] gtable_0.3.6       jsonlite_2.0.0     compiler_4.5.2     tidyselect_1.2.1  
@@ -769,7 +775,7 @@ sessionInfo()
 #> [17] forcats_1.0.1      tibble_3.3.1       desc_1.4.3         bslib_0.10.0      
 #> [21] pillar_1.11.1      RColorBrewer_1.1-3 rlang_1.1.7        utf8_1.2.6        
 #> [25] cachem_1.1.0       xfun_0.56          S7_0.2.1           fs_1.6.6          
-#> [29] sass_0.4.10        viridisLite_0.4.2  cli_3.6.5          withr_3.0.2       
+#> [29] sass_0.4.10        viridisLite_0.4.3  cli_3.6.5          withr_3.0.2       
 #> [33] pkgdown_2.2.0      magrittr_2.0.4     digest_0.6.39      grid_4.5.2        
 #> [37] rappdirs_0.3.4     lifecycle_1.0.5    vctrs_0.7.1        evaluate_1.0.5    
 #> [41] glue_1.8.0         cellranger_1.1.0   farver_2.1.2       codetools_0.2-20  
