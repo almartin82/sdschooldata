@@ -134,6 +134,44 @@ devtools::test(filter = "pipeline-live")
 
 ------------------------------------------------------------------------
 
+## Valid Filter Values (tidy enrollment via `fetch_enr(tidy = TRUE)`)
+
+### subgroup
+
+`total_enrollment`, `white`, `black`, `hispanic`, `asian`,
+`native_american`, `pacific_islander`, `multiracial`, `male`, `female`
+
+**NOT in tidy enrollment:** No special population subgroups
+(economically disadvantaged, ELL, special education) are available in SD
+enrollment data. Gender data comes from a separate campus-level file and
+may not be available at the district level. Demographics come from a
+campus race/ethnicity file.
+
+### grade_level
+
+`PK`, `K`, `01`-`12`, `UG`, `TOTAL`
+
+Grade aggregates from
+[`enr_grade_aggs()`](https://almartin82.github.io/sdschooldata/reference/enr_grade_aggs.md):
+`K8`, `HS`, `K12`
+
+**Common trap:** SD raw data uses `KG` for kindergarten and `UG` for
+ungraded.
+[`process_enr()`](https://almartin82.github.io/sdschooldata/reference/process_enr.md)
+maps `KG` to `grade_k` which becomes `K` in tidy output. `UG` (ungraded)
+is preserved. The K12 aggregate excludes both `PK` and `UG`.
+
+### entity flags
+
+`is_state`, `is_district`, `is_campus`, `is_public`
+
+**Note:** SD uses `is_campus` (not `is_school`). `is_public` is derived
+from `district_type_code` (code `10` = public). Historical data
+(pre-2011) may not have `district_type_code`, in which case `is_public`
+defaults to TRUE.
+
+------------------------------------------------------------------------
+
 ## Fidelity Requirement
 
 **tidy=TRUE MUST maintain fidelity to raw, unprocessed data:** -

@@ -140,6 +140,25 @@
 <hr></div>
 </div>
 <div class="section level2">
+<h2 id="valid-filter-values-tidy-enrollment-via-fetch_enrtidy--true">Valid Filter Values (tidy enrollment via <code>fetch_enr(tidy = TRUE)</code>)<a class="anchor" aria-label="anchor" href="#valid-filter-values-tidy-enrollment-via-fetch_enrtidy--true"></a></h2>
+<div class="section level3">
+<h3 id="subgroup">subgroup<a class="anchor" aria-label="anchor" href="#subgroup"></a></h3>
+<p><code>total_enrollment</code>, <code>white</code>, <code>black</code>, <code>hispanic</code>, <code>asian</code>, <code>native_american</code>, <code>pacific_islander</code>, <code>multiracial</code>, <code>male</code>, <code>female</code></p>
+<p><strong>NOT in tidy enrollment:</strong> No special population subgroups (economically disadvantaged, ELL, special education) are available in SD enrollment data. Gender data comes from a separate campus-level file and may not be available at the district level. Demographics come from a campus race/ethnicity file.</p>
+</div>
+<div class="section level3">
+<h3 id="grade_level">grade_level<a class="anchor" aria-label="anchor" href="#grade_level"></a></h3>
+<p><code>PK</code>, <code>K</code>, <code>01</code>-<code>12</code>, <code>UG</code>, <code>TOTAL</code></p>
+<p>Grade aggregates from <code><a href="reference/enr_grade_aggs.html">enr_grade_aggs()</a></code>: <code>K8</code>, <code>HS</code>, <code>K12</code></p>
+<p><strong>Common trap:</strong> SD raw data uses <code>KG</code> for kindergarten and <code>UG</code> for ungraded. <code><a href="reference/process_enr.html">process_enr()</a></code> maps <code>KG</code> to <code>grade_k</code> which becomes <code>K</code> in tidy output. <code>UG</code> (ungraded) is preserved. The K12 aggregate excludes both <code>PK</code> and <code>UG</code>.</p>
+</div>
+<div class="section level3">
+<h3 id="entity-flags">entity flags<a class="anchor" aria-label="anchor" href="#entity-flags"></a></h3>
+<p><code>is_state</code>, <code>is_district</code>, <code>is_campus</code>, <code>is_public</code></p>
+<p><strong>Note:</strong> SD uses <code>is_campus</code> (not <code>is_school</code>). <code>is_public</code> is derived from <code>district_type_code</code> (code <code>10</code> = public). Historical data (pre-2011) may not have <code>district_type_code</code>, in which case <code>is_public</code> defaults to TRUE.</p>
+<hr></div>
+</div>
+<div class="section level2">
 <h2 id="fidelity-requirement">Fidelity Requirement<a class="anchor" aria-label="anchor" href="#fidelity-requirement"></a></h2>
 <p><strong>tidy=TRUE MUST maintain fidelity to raw, unprocessed data:</strong> - Enrollment counts in tidy format must exactly match the wide format - No rounding or transformation of counts during tidying - Percentages are calculated fresh but counts are preserved - State aggregates are sums of school-level data</p>
 <hr></div>
