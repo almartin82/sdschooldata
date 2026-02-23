@@ -30,6 +30,7 @@ state_totals <- enr |>
   mutate(change = n_students - lag(n_students),
          pct_change = round(change / lag(n_students) * 100, 2))
 
+stopifnot(nrow(state_totals) > 0)
 state_totals
 #>    end_year n_students change pct_change
 #> 1      2015     134054     NA         NA
@@ -77,6 +78,7 @@ top_10 <- enr_2025 |>
   head(10) |>
   select(district_name, n_students)
 
+stopifnot(nrow(top_10) > 0)
 top_10
 #>           district_name n_students
 #> 1      Sioux Falls 49-5      24841
@@ -112,19 +114,34 @@ top_10 |>
 
 South Dakota has one of the highest percentages of Native American
 students in the nation, reflecting the state’s large reservation lands
-including Pine Ridge, Rosebud, and Standing Rock.
+including Pine Ridge, Rosebud, and Standing Rock. Demographic data is
+reported at the campus level; here we aggregate across all campuses
+statewide.
 
 ``` r
+state_total <- enr_2025 |>
+  filter(is_state, subgroup == "total_enrollment", grade_level == "TOTAL") |>
+  pull(n_students)
+
 demographics <- enr_2025 |>
-  filter(is_state, grade_level == "TOTAL",
+  filter(is_campus, grade_level == "TOTAL",
          subgroup %in% c("white", "native_american", "hispanic", "black", "asian", "multiracial")) |>
-  mutate(pct = round(pct * 100, 1)) |>
-  select(subgroup, n_students, pct) |>
+  group_by(subgroup) |>
+  summarize(n_students = sum(n_students, na.rm = TRUE), .groups = "drop") |>
+  mutate(pct = round(n_students / state_total * 100, 1)) |>
   arrange(desc(n_students))
 
+stopifnot(nrow(demographics) > 0)
 demographics
-#> [1] subgroup   n_students pct       
-#> <0 rows> (or 0-length row.names)
+#> # A tibble: 6 × 3
+#>   subgroup        n_students   pct
+#>   <chr>                <dbl> <dbl>
+#> 1 white                95447  68.7
+#> 2 native_american      14283  10.3
+#> 3 hispanic             12845   9.3
+#> 4 multiracial           8681   6.3
+#> 5 black                 5051   3.6
+#> 6 asian                 2308   1.7
 ```
 
 ``` r
@@ -137,6 +154,7 @@ demographics |>
   scale_fill_brewer(palette = "Set2") +
   labs(
     title = "South Dakota Student Demographics (2025)",
+    subtitle = "Aggregated from campus-level enrollment reports",
     x = "Number of Students",
     y = NULL
   )
@@ -146,51 +164,58 @@ demographics |>
 
 ------------------------------------------------------------------------
 
-## 4. Sioux Falls and Rapid City are growing
+## 4. Sioux Falls grows while Rapid City and rural hubs decline
 
-The state’s two major urban centers continue to grow while rural areas
-face challenges, reflecting broader urbanization trends.
+The state’s largest district continues to grow, but Rapid City lost 12%
+of its enrollment since 2015 and other regional hubs are shrinking.
+District names vary across years in SD data, so we use district_id to
+track districts consistently.
 
 ``` r
 urban_growth <- enr |>
   filter(is_district, subgroup == "total_enrollment", grade_level == "TOTAL",
          grepl("Sioux Falls|Rapid City|Aberdeen|Brookings|Watertown", district_name)) |>
-  group_by(district_name) |>
+  group_by(district_id) |>
+  arrange(end_year) |>
   summarize(
-    y_first = n_students[end_year == min(end_year)],
-    y_last = n_students[end_year == max(end_year)],
-    first_year = min(end_year),
-    last_year = max(end_year),
-    pct_change = round((y_last / y_first - 1) * 100, 1),
+    district_name = last(district_name),
+    y2015 = n_students[end_year == min(end_year)],
+    y2025 = n_students[end_year == max(end_year)],
+    pct_change = round((y2025 / y2015 - 1) * 100, 1),
     .groups = "drop"
   ) |>
   arrange(desc(pct_change))
 
+stopifnot(nrow(urban_growth) > 0)
 urban_growth
-#> # A tibble: 8 × 6
-#>   district_name                y_first y_last first_year last_year pct_change
-#>   <chr>                          <dbl>  <dbl>      <dbl>     <dbl>      <dbl>
-#> 1 Brookings 05-1                  3351   3483       2015      2025        3.9
-#> 2 Sioux Falls 49-5               24216  24841       2015      2025        2.6
-#> 3 Rapid City  Area 51-           12809  12809       2020      2020        0  
-#> 4 Rapid City Area Schools 51-4   13743  13743       2015      2015        0  
-#> 5 Rapid City  Area 51-4          13743  13609       2016      2019       -1  
-#> 6 Rapid City Area 51-4           12743  12040       2022      2025       -5.5
-#> 7 Aberdeen 06-1                   4485   4134       2015      2025       -7.8
-#> 8 Watertown 14-4                  4016   3425       2015      2025      -14.7
+#> # A tibble: 5 × 5
+#>   district_id district_name        y2015 y2025 pct_change
+#>   <chr>       <chr>                <dbl> <dbl>      <dbl>
+#> 1 05001       Brookings 05-1        3351  3483        3.9
+#> 2 49005       Sioux Falls 49-5     24216 24841        2.6
+#> 3 06001       Aberdeen 06-1         4485  4134       -7.8
+#> 4 51004       Rapid City Area 51-4 13743 12040      -12.4
+#> 5 14004       Watertown 14-4        4016  3425      -14.7
 ```
 
 ``` r
 enr |>
   filter(is_district, subgroup == "total_enrollment", grade_level == "TOTAL",
          grepl("Sioux Falls|Rapid City|Aberdeen|Brookings", district_name)) |>
-  ggplot(aes(x = end_year, y = n_students, color = district_name)) +
+  mutate(district_label = case_when(
+    district_id == "49005" ~ "Sioux Falls",
+    district_id == "51004" ~ "Rapid City",
+    district_id == "06001" ~ "Aberdeen",
+    district_id == "05001" ~ "Brookings",
+    TRUE ~ district_name
+  )) |>
+  ggplot(aes(x = end_year, y = n_students, color = district_label)) +
   geom_line(linewidth = 1.2) +
   geom_point(size = 2) +
   scale_y_continuous(labels = scales::comma) +
   labs(
     title = "South Dakota Urban District Growth",
-    subtitle = "Sioux Falls leads in both size and growth",
+    subtitle = "Sioux Falls grows while Rapid City and rural hubs lose students",
     x = "School Year",
     y = "Enrollment",
     color = "District"
@@ -215,6 +240,7 @@ small <- enr_2025 |>
   head(15) |>
   select(district_name, n_students)
 
+stopifnot(nrow(small) > 0)
 small
 #>         district_name n_students
 #> 1   Elk Mountain 16-2         20
@@ -236,37 +262,54 @@ small
 
 ------------------------------------------------------------------------
 
-## 6. Hispanic enrollment is rising
+## 6. Hispanic enrollment is rising fast
 
-While still a small percentage of total enrollment, Hispanic students
-are the fastest-growing demographic group in South Dakota schools,
-showing consistent growth over the past decade.
+Hispanic students are the fastest-growing demographic group in South
+Dakota schools, climbing from 3.98% to 4.63% of campus enrollment in
+just four years (2022-2025). Campus-level demographic data is available
+starting in 2022.
 
 ``` r
-# Use years with reliable data (avoiding 2006-2010 which have old XLS parsing issues)
-reliable_years <- c(2015:2020, 2022:2025)
-enr_full <- fetch_enr_multi(reliable_years, use_cache = TRUE)
+hispanic_years <- c(2022:2025)
+enr_hispanic <- fetch_enr_multi(hispanic_years, use_cache = TRUE)
 
-hispanic_trend <- enr_full |>
-  filter(is_state, subgroup == "hispanic", grade_level == "TOTAL") |>
-  filter(!is.na(pct)) |>
-  mutate(pct = round(pct * 100, 2)) |>
+hispanic_trend <- enr_hispanic |>
+  filter(is_campus, subgroup == "hispanic", grade_level == "TOTAL") |>
+  group_by(end_year) |>
+  summarize(n_students = sum(n_students, na.rm = TRUE), .groups = "drop")
+
+hispanic_totals <- enr_hispanic |>
+  filter(is_campus, subgroup == "total_enrollment", grade_level == "TOTAL") |>
+  group_by(end_year) |>
+  summarize(total = sum(n_students, na.rm = TRUE), .groups = "drop")
+
+hispanic_trend <- hispanic_trend |>
+  left_join(hispanic_totals, by = "end_year") |>
+  mutate(pct = round(n_students / total * 100, 2)) |>
   select(end_year, n_students, pct)
 
+stopifnot(nrow(hispanic_trend) > 0)
 hispanic_trend
-#> [1] end_year   n_students pct       
-#> <0 rows> (or 0-length row.names)
+#> # A tibble: 4 × 3
+#>   end_year n_students   pct
+#>      <int>      <dbl> <dbl>
+#> 1     2022      11265  3.98
+#> 2     2023      11983  4.25
+#> 3     2024      12751  4.53
+#> 4     2025      12845  4.63
 ```
 
 ``` r
-ggplot(hispanic_trend, aes(x = end_year, y = pct)) +
+ggplot(hispanic_trend, aes(x = end_year, y = n_students)) +
   geom_line(linewidth = 1.2, color = "#2E8B57") +
   geom_point(size = 3, color = "#2E8B57") +
+  geom_text(aes(label = paste0(pct, "%")), vjust = -1.5) +
+  scale_y_continuous(labels = scales::comma, expand = expansion(mult = c(0, 0.15))) +
   labs(
-    title = "Hispanic Student Enrollment Growth",
-    subtitle = "Steady increase over two decades",
+    title = "Hispanic Student Enrollment Growth (2022-2025)",
+    subtitle = "Fastest-growing demographic group in South Dakota",
     x = "School Year",
-    y = "Percent of Total Enrollment"
+    y = "Number of Students"
   )
 ```
 
@@ -277,7 +320,8 @@ ggplot(hispanic_trend, aes(x = end_year, y = pct)) +
 ## 7. Sioux Falls suburban growth outpaces the city
 
 Harrisburg and Tea Area have seen explosive growth as Sioux Falls
-suburbs boom, with Harrisburg tripling its enrollment in just 15 years.
+suburbs boom, with Harrisburg more than doubling its enrollment from
+2,724 to 6,398 students in just 15 years.
 
 ``` r
 suburbs <- fetch_enr_multi(c(2011, 2015, 2020, 2025), use_cache = TRUE)
@@ -287,6 +331,7 @@ suburb_trend <- suburbs |>
          grepl("Harrisburg|Tea Area|Brandon Valley", district_name)) |>
   select(end_year, district_name, n_students)
 
+stopifnot(nrow(suburb_trend) > 0)
 suburb_trend
 #>    end_year                 district_name n_students
 #> 1      2011           Brandon Valley 49-2       3364
@@ -331,13 +376,14 @@ Rapid City Area School District anchors western South Dakota, serving as
 the only major urban district west of the Missouri River.
 
 ``` r
-rapid <- fetch_enr_multi(2015:2025, use_cache = TRUE)
+rapid <- fetch_enr_multi(c(2015:2020, 2022:2025), use_cache = TRUE)
 
 rapid_trend <- rapid |>
   filter(is_district, grepl("Rapid City", district_name),
          subgroup == "total_enrollment", grade_level == "TOTAL") |>
   select(end_year, n_students)
 
+stopifnot(nrow(rapid_trend) > 0)
 rapid_trend
 #>    end_year n_students
 #> 1      2015      13743
@@ -346,18 +392,14 @@ rapid_trend
 #> 4      2018      13832
 #> 5      2019      13609
 #> 6      2020      12809
-#> 7      2021       1090
-#> 8      2022      12743
-#> 9      2023      12433
-#> 10     2024      12313
-#> 11     2025      12040
+#> 7      2022      12743
+#> 8      2023      12433
+#> 9      2024      12313
+#> 10     2025      12040
 ```
 
 ``` r
-rapid |>
-  filter(is_district, grepl("Rapid City", district_name),
-         subgroup == "total_enrollment", grade_level == "TOTAL") |>
-  ggplot(aes(x = end_year, y = n_students)) +
+ggplot(rapid_trend, aes(x = end_year, y = n_students)) +
   geom_line(linewidth = 1.2, color = "#8B4513") +
   geom_point(size = 3, color = "#8B4513") +
   scale_y_continuous(labels = scales::comma, limits = c(12000, 16000)) +
@@ -385,9 +427,10 @@ reservation <- fetch_enr_multi(c(2015, 2020, 2025), use_cache = TRUE)
 res_data <- reservation |>
   filter(is_district,
          grepl("Todd County|Oglala Lakota|Shannon", district_name),
-         subgroup %in% c("total_enrollment", "native_american"),
+         subgroup == "total_enrollment",
          grade_level == "TOTAL")
 
+stopifnot(nrow(res_data) > 0)
 res_data
 #>   end_year     type district_id campus_id             district_name campus_name
 #> 1     2015 District       65001      <NA> Oglala Lakota County 65-1        <NA>
@@ -449,6 +492,7 @@ tiny_districts <- tiny |>
   head(20) |>
   select(district_name, n_students)
 
+stopifnot(nrow(tiny_districts) > 0)
 tiny_districts
 #>        district_name n_students
 #> 1  Elk Mountain 16-2         20
@@ -457,13 +501,16 @@ tiny_districts
 ```
 
 ``` r
-fetch_enr(2025, use_cache = TRUE) |>
+size_dist <- fetch_enr(2025, use_cache = TRUE) |>
   filter(is_district, subgroup == "total_enrollment", grade_level == "TOTAL") |>
   mutate(size_category = cut(n_students,
                               breaks = c(0, 100, 250, 500, 1000, 5000, Inf),
                               labels = c("<100", "100-249", "250-499", "500-999", "1000-4999", "5000+"))) |>
-  count(size_category) |>
-  ggplot(aes(x = size_category, y = n, fill = size_category)) +
+  count(size_category)
+
+stopifnot(nrow(size_dist) > 0)
+
+ggplot(size_dist, aes(x = size_category, y = n, fill = size_category)) +
   geom_col(show.legend = FALSE) +
   geom_text(aes(label = n), vjust = -0.5) +
   scale_fill_viridis_d(option = "C") +
@@ -479,43 +526,63 @@ fetch_enr(2025, use_cache = TRUE) |>
 
 ------------------------------------------------------------------------
 
-## 11. Gender balance across districts
+## 11. High school enrollment surging while elementary stays flat
 
-South Dakota schools are remarkably balanced by gender, though some
-variation exists across districts and grade levels.
+South Dakota’s high school enrollment grew 12% from 2015 to 2025, while
+K-8 enrollment stayed essentially flat. This reflects larger birth
+cohorts aging into upper grades.
 
 ``` r
-gender <- fetch_enr(2025, use_cache = TRUE)
+hs_elem <- enr |>
+  filter(is_state, subgroup == "total_enrollment",
+         grade_level %in% c("K", paste0("0", 1:8), "09", "10", "11", "12")) |>
+  mutate(level = ifelse(grade_level %in% c("09", "10", "11", "12"), "High School", "K-8")) |>
+  group_by(end_year, level) |>
+  summarize(n_students = sum(n_students, na.rm = TRUE), .groups = "drop")
 
-gender_state <- gender |>
-  filter(is_state, grade_level == "TOTAL",
-         subgroup %in% c("male", "female")) |>
-  select(subgroup, n_students, pct) |>
-  mutate(pct = round(pct * 100, 1))
-
-gender_state
-#> [1] subgroup   n_students pct       
-#> <0 rows> (or 0-length row.names)
+stopifnot(nrow(hs_elem) > 0)
+hs_elem
+#> # A tibble: 20 × 3
+#>    end_year level       n_students
+#>       <int> <chr>            <dbl>
+#>  1     2015 High School      37100
+#>  2     2015 K-8              93836
+#>  3     2016 High School      37306
+#>  4     2016 K-8              95214
+#>  5     2017 High School      37625
+#>  6     2017 K-8              96236
+#>  7     2018 High School      37972
+#>  8     2018 K-8              97021
+#>  9     2019 High School      38825
+#> 10     2019 K-8              97308
+#> 11     2020 High School      40303
+#> 12     2020 K-8              95681
+#> 13     2022 High School      41804
+#> 14     2022 K-8              96271
+#> 15     2023 High School      42063
+#> 16     2023 K-8              95696
+#> 17     2024 High School      42133
+#> 18     2024 K-8              95180
+#> 19     2025 High School      41507
+#> 20     2025 K-8              94070
 ```
 
 ``` r
-fetch_enr(2025, use_cache = TRUE) |>
-  filter(is_state, subgroup %in% c("male", "female"),
-         !grade_level %in% c("TOTAL", "PK", "UG")) |>
-  ggplot(aes(x = grade_level, y = n_students, fill = subgroup)) +
-  geom_col(position = "dodge") +
-  scale_fill_manual(values = c("female" = "#E7298A", "male" = "#1B9E77"),
-                    labels = c("Female", "Male")) +
+ggplot(hs_elem, aes(x = end_year, y = n_students, color = level)) +
+  geom_line(linewidth = 1.2) +
+  geom_point(size = 2) +
+  scale_y_continuous(labels = scales::comma) +
+  scale_color_manual(values = c("High School" = "#E7298A", "K-8" = "#1B9E77")) +
   labs(
-    title = "Enrollment by Gender and Grade Level",
-    subtitle = "Slight male majority in early grades, converges by high school",
-    x = "Grade Level",
+    title = "K-8 vs High School Enrollment (2015-2025)",
+    subtitle = "High school enrollment grew 12% while K-8 stayed flat",
+    x = "School Year",
     y = "Enrollment",
-    fill = "Gender"
+    color = "Level"
   )
 ```
 
-![](enrollment_hooks_files/figure-html/gender-chart-1.png)
+![](enrollment_hooks_files/figure-html/hs-vs-elem-chart-1.png)
 
 ------------------------------------------------------------------------
 
@@ -534,6 +601,7 @@ bh_districts <- black_hills |>
   arrange(desc(n_students)) |>
   select(district_name, n_students)
 
+stopifnot(nrow(bh_districts) > 0)
 bh_districts
 #>          district_name n_students
 #> 1 Rapid City Area 51-4      12040
@@ -570,13 +638,14 @@ Aberdeen School District anchors the northeast, with surrounding
 agricultural communities feeding into regional schools.
 
 ``` r
-northeast <- fetch_enr_multi(2015:2025, use_cache = TRUE)
+northeast <- fetch_enr_multi(c(2015:2020, 2022:2025), use_cache = TRUE)
 
 ne_trend <- northeast |>
   filter(is_district, grepl("Aberdeen", district_name),
          subgroup == "total_enrollment", grade_level == "TOTAL") |>
   select(end_year, n_students)
 
+stopifnot(nrow(ne_trend) > 0)
 ne_trend
 #>    end_year n_students
 #> 1      2015       4485
@@ -592,7 +661,7 @@ ne_trend
 ```
 
 ``` r
-fetch_enr_multi(2015:2025, use_cache = TRUE) |>
+fetch_enr_multi(c(2015:2020, 2022:2025), use_cache = TRUE) |>
   filter(is_district,
          grepl("Aberdeen|Watertown|Huron|Mitchell", district_name),
          subgroup == "total_enrollment", grade_level == "TOTAL") |>
@@ -630,6 +699,7 @@ prek_data <- prek |>
   head(15) |>
   select(district_name, n_students)
 
+stopifnot(nrow(prek_data) > 0)
 prek_data
 #>                district_name n_students
 #> 1           Sioux Falls 49-5        791
@@ -650,13 +720,16 @@ prek_data
 ```
 
 ``` r
-fetch_enr(2025, use_cache = TRUE) |>
+prek_chart_data <- fetch_enr(2025, use_cache = TRUE) |>
   filter(is_district, subgroup == "total_enrollment", grade_level == "PK") |>
   filter(n_students > 0) |>
   arrange(desc(n_students)) |>
   head(10) |>
-  mutate(district_name = forcats::fct_reorder(district_name, n_students)) |>
-  ggplot(aes(x = n_students, y = district_name)) +
+  mutate(district_name = forcats::fct_reorder(district_name, n_students))
+
+stopifnot(nrow(prek_chart_data) > 0)
+
+ggplot(prek_chart_data, aes(x = n_students, y = district_name)) +
   geom_col(fill = "#9467BD") +
   scale_x_continuous(labels = scales::comma) +
   labs(
@@ -673,32 +746,47 @@ fetch_enr(2025, use_cache = TRUE) |>
 
 ## 15. Multiracial students: South Dakota’s growing diversity
 
-Multiracial students are one of the fastest-growing demographic
-categories, reflecting changing family patterns statewide.
+Multiracial students grew from 8,129 (2.87%) to 8,681 (3.13%) of campus
+enrollment between 2022 and 2025, reflecting changing family patterns
+statewide. Campus-level demographic data is available starting in 2022.
 
 ``` r
-multi <- fetch_enr_multi(c(2015, 2018, 2022, 2025), use_cache = TRUE)
+multi <- fetch_enr_multi(c(2022, 2023, 2024, 2025), use_cache = TRUE)
 
 multi_trend <- multi |>
-  filter(is_state, subgroup == "multiracial", grade_level == "TOTAL") |>
-  select(end_year, n_students, pct) |>
-  mutate(pct = round(pct * 100, 2))
+  filter(is_campus, subgroup == "multiracial", grade_level == "TOTAL") |>
+  group_by(end_year) |>
+  summarize(n_students = sum(n_students, na.rm = TRUE), .groups = "drop")
 
+multi_totals <- multi |>
+  filter(is_campus, subgroup == "total_enrollment", grade_level == "TOTAL") |>
+  group_by(end_year) |>
+  summarize(total = sum(n_students, na.rm = TRUE), .groups = "drop")
+
+multi_trend <- multi_trend |>
+  left_join(multi_totals, by = "end_year") |>
+  mutate(pct = round(n_students / total * 100, 2)) |>
+  select(end_year, n_students, pct)
+
+stopifnot(nrow(multi_trend) > 0)
 multi_trend
-#> [1] end_year   n_students pct       
-#> <0 rows> (or 0-length row.names)
+#> # A tibble: 4 × 3
+#>   end_year n_students   pct
+#>      <int>      <dbl> <dbl>
+#> 1     2022       8129  2.87
+#> 2     2023       8370  2.97
+#> 3     2024       8576  3.05
+#> 4     2025       8681  3.13
 ```
 
 ``` r
-fetch_enr_multi(c(2015, 2018, 2022, 2025), use_cache = TRUE) |>
-  filter(is_state, subgroup == "multiracial", grade_level == "TOTAL") |>
-  ggplot(aes(x = end_year, y = n_students)) +
-  geom_col(fill = "#17BECF", width = 2) +
+ggplot(multi_trend, aes(x = end_year, y = n_students)) +
+  geom_col(fill = "#17BECF", width = 0.7) +
   geom_text(aes(label = scales::comma(n_students)), vjust = -0.5) +
   scale_y_continuous(labels = scales::comma, expand = expansion(mult = c(0, 0.15))) +
   labs(
-    title = "Multiracial Student Enrollment Growth",
-    subtitle = "One of the fastest-growing demographic categories",
+    title = "Multiracial Student Enrollment Growth (2022-2025)",
+    subtitle = "Growing share of South Dakota's student population",
     x = "School Year",
     y = "Number of Students"
   )
@@ -724,7 +812,7 @@ South Dakota’s school enrollment data reveals:
 - **Rural struggles**: Many tiny districts face consolidation pressure
 - **Demographic change**: Hispanic and multiracial enrollment growing
   steadily
-- **Gender balance**: Schools are remarkably balanced by gender
+- **High school surge**: HS enrollment grew 12% while K-8 stayed flat
 - **Regional hubs**: Black Hills and northeast districts anchor their
   regions
 - **Early childhood**: Pre-K access varies significantly across
