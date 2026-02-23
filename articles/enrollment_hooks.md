@@ -268,7 +268,7 @@ small
 ## 6. Hispanic enrollment is rising fast
 
 Hispanic students are the fastest-growing demographic group in South
-Dakota schools, climbing from 3.98% to 4.63% of campus enrollment in
+Dakota schools, climbing from 7.97% to 9.25% of statewide enrollment in
 just four years (2022-2025). Campus-level demographic data is available
 starting in 2022.
 
@@ -281,13 +281,12 @@ hispanic_trend <- enr_hispanic |>
   group_by(end_year) |>
   summarize(n_students = sum(n_students, na.rm = TRUE), .groups = "drop")
 
-hispanic_totals <- enr_hispanic |>
-  filter(is_campus, subgroup == "total_enrollment", grade_level == "TOTAL") |>
-  group_by(end_year) |>
-  summarize(total = sum(n_students, na.rm = TRUE), .groups = "drop")
+state_totals_hisp <- enr_hispanic |>
+  filter(is_state, subgroup == "total_enrollment", grade_level == "TOTAL") |>
+  select(end_year, total = n_students)
 
 hispanic_trend <- hispanic_trend |>
-  left_join(hispanic_totals, by = "end_year") |>
+  left_join(state_totals_hisp, by = "end_year") |>
   mutate(pct = round(n_students / total * 100, 2)) |>
   select(end_year, n_students, pct)
 
@@ -296,10 +295,10 @@ hispanic_trend
 #> # A tibble: 4 × 3
 #>   end_year n_students   pct
 #>      <int>      <dbl> <dbl>
-#> 1     2022      11265  3.98
-#> 2     2023      11983  4.25
-#> 3     2024      12751  4.53
-#> 4     2025      12845  4.63
+#> 1     2022      11265  7.97
+#> 2     2023      11983  8.5 
+#> 3     2024      12751  9.07
+#> 4     2025      12845  9.25
 ```
 
 ``` r
@@ -754,9 +753,10 @@ ggplot(prek_chart_data, aes(x = n_students, y = district_name)) +
 
 ## 15. Multiracial students: South Dakota’s growing diversity
 
-Multiracial students grew from 8,129 (2.87%) to 8,681 (3.13%) of campus
-enrollment between 2022 and 2025, reflecting changing family patterns
-statewide. Campus-level demographic data is available starting in 2022.
+Multiracial students grew from 8,129 (5.75%) to 8,681 (6.25%) of
+statewide enrollment between 2022 and 2025, reflecting changing family
+patterns statewide. Campus-level demographic data is available starting
+in 2022.
 
 ``` r
 multi <- fetch_enr_multi(c(2022, 2023, 2024, 2025), use_cache = TRUE)
@@ -766,13 +766,12 @@ multi_trend <- multi |>
   group_by(end_year) |>
   summarize(n_students = sum(n_students, na.rm = TRUE), .groups = "drop")
 
-multi_totals <- multi |>
-  filter(is_campus, subgroup == "total_enrollment", grade_level == "TOTAL") |>
-  group_by(end_year) |>
-  summarize(total = sum(n_students, na.rm = TRUE), .groups = "drop")
+state_totals_multi <- multi |>
+  filter(is_state, subgroup == "total_enrollment", grade_level == "TOTAL") |>
+  select(end_year, total = n_students)
 
 multi_trend <- multi_trend |>
-  left_join(multi_totals, by = "end_year") |>
+  left_join(state_totals_multi, by = "end_year") |>
   mutate(pct = round(n_students / total * 100, 2)) |>
   select(end_year, n_students, pct)
 
@@ -781,10 +780,10 @@ multi_trend
 #> # A tibble: 4 × 3
 #>   end_year n_students   pct
 #>      <int>      <dbl> <dbl>
-#> 1     2022       8129  2.87
-#> 2     2023       8370  2.97
-#> 3     2024       8576  3.05
-#> 4     2025       8681  3.13
+#> 1     2022       8129  5.75
+#> 2     2023       8370  5.94
+#> 3     2024       8576  6.1 
+#> 4     2025       8681  6.25
 ```
 
 ``` r
