@@ -94,9 +94,9 @@ Explore enrollment trends, demographic patterns, and regional differences across
 
 ---
 
-## 1. South Dakota enrollment is slowly growing
+## 1. South Dakota enrollment peaked in 2022 and is now declining
 
-Unlike many states seeing post-pandemic declines, South Dakota's public school enrollment has been relatively stable with modest growth, reaching approximately 140,000 students.
+South Dakota's public school enrollment grew steadily from 2015 to 2022, peaking at 141,429, but has dropped 1.8% since then -- losing 2,568 students in three years.
 
 ```r
 library(sdschooldata)
@@ -483,7 +483,7 @@ hs_elem
 
 ## 12. The Black Hills corridor
 
-The Black Hills region forms a distinct educational corridor, with Rapid City at its center and smaller communities like Spearfish, Sturgis, and Custer serving surrounding areas.
+The Black Hills region forms a distinct educational corridor, with Rapid City at its center and smaller communities like Spearfish, Custer, and Belle Fourche serving surrounding areas.
 
 ```r
 black_hills <- fetch_enr(2025, use_cache = TRUE)
@@ -618,7 +618,7 @@ multi_trend
 
 South Dakota's school enrollment data reveals:
 
-- **Steady growth**: Unlike many states, South Dakota enrollment remains stable
+- **Post-peak decline**: Enrollment peaked at 141,429 in 2022 and is now dropping
 - **Urban concentration**: Sioux Falls and Rapid City dominate enrollment
 - **Native American presence**: Significant Native American student population
 - **Suburban boom**: Harrisburg and Tea Area growing rapidly
