@@ -15,11 +15,11 @@ surfacing key trends and demographic patterns across 20 years of data
 
 ------------------------------------------------------------------------
 
-## 1. South Dakota enrollment is slowly growing
+## 1. South Dakota enrollment peaked in 2022 and is now declining
 
-Unlike many states seeing post-pandemic declines, South Dakota’s public
-school enrollment has been relatively stable with modest growth,
-reaching approximately 140,000 students.
+South Dakota’s public school enrollment grew steadily from 2015 to 2022,
+peaking at 141,429, but has dropped 1.8% since then – losing 2,568
+students in three years.
 
 ``` r
 enr <- fetch_enr_multi(c(2015:2020, 2022:2025), use_cache = TRUE)
@@ -47,13 +47,15 @@ state_totals
 
 ``` r
 ggplot(state_totals, aes(x = end_year, y = n_students)) +
+  geom_vline(xintercept = 2020, linetype = "dashed", color = "gray50", alpha = 0.7) +
+  annotate("text", x = 2020, y = max(state_totals$n_students), label = "COVID", hjust = -0.2, color = "gray50", size = 3) +
   geom_line(linewidth = 1.2, color = "#003087") +
   geom_point(size = 3, color = "#003087") +
   scale_y_continuous(labels = scales::comma) +
   scale_x_continuous(breaks = seq(2015, 2025, 2)) +
   labs(
     title = "South Dakota Public School Enrollment (2015-2025)",
-    subtitle = "Modest growth despite national enrollment declines",
+    subtitle = "Peaked in 2022 at 141,429; now declining",
     x = "School Year (ending)",
     y = "Total Enrollment"
   )
@@ -210,6 +212,7 @@ enr |>
     TRUE ~ district_name
   )) |>
   ggplot(aes(x = end_year, y = n_students, color = district_label)) +
+  geom_vline(xintercept = 2020, linetype = "dashed", color = "gray50", alpha = 0.7) +
   geom_line(linewidth = 1.2) +
   geom_point(size = 2) +
   scale_y_continuous(labels = scales::comma) +
@@ -353,6 +356,7 @@ suburbs |>
   filter(is_district, subgroup == "total_enrollment", grade_level == "TOTAL",
          grepl("Harrisburg|Tea Area|Brandon Valley", district_name)) |>
   ggplot(aes(x = end_year, y = n_students, color = district_name)) +
+  geom_vline(xintercept = 2020, linetype = "dashed", color = "gray50", alpha = 0.7) +
   geom_line(linewidth = 1.2) +
   geom_point(size = 3) +
   scale_y_continuous(labels = scales::comma) +
@@ -400,12 +404,14 @@ rapid_trend
 
 ``` r
 ggplot(rapid_trend, aes(x = end_year, y = n_students)) +
+  geom_vline(xintercept = 2020, linetype = "dashed", color = "gray50", alpha = 0.7) +
+  annotate("text", x = 2020, y = 15500, label = "COVID", hjust = -0.2, color = "gray50", size = 3) +
   geom_line(linewidth = 1.2, color = "#8B4513") +
   geom_point(size = 3, color = "#8B4513") +
   scale_y_continuous(labels = scales::comma, limits = c(12000, 16000)) +
   labs(
     title = "Rapid City Area School District Enrollment",
-    subtitle = "West River's educational hub",
+    subtitle = "Steady decline from 13,832 peak in 2018 to 12,040 in 2025",
     x = "School Year",
     y = "Total Enrollment"
   )
@@ -569,6 +575,7 @@ hs_elem
 
 ``` r
 ggplot(hs_elem, aes(x = end_year, y = n_students, color = level)) +
+  geom_vline(xintercept = 2020, linetype = "dashed", color = "gray50", alpha = 0.7) +
   geom_line(linewidth = 1.2) +
   geom_point(size = 2) +
   scale_y_continuous(labels = scales::comma) +
@@ -589,8 +596,8 @@ ggplot(hs_elem, aes(x = end_year, y = n_students, color = level)) +
 ## 12. The Black Hills corridor
 
 The Black Hills region forms a distinct educational corridor, with Rapid
-City at its center and smaller communities like Spearfish, Sturgis, and
-Custer serving surrounding areas.
+City at its center and smaller communities like Spearfish, Custer, and
+Belle Fourche serving surrounding areas.
 
 ``` r
 black_hills <- fetch_enr(2025, use_cache = TRUE)
@@ -666,6 +673,7 @@ fetch_enr_multi(c(2015:2020, 2022:2025), use_cache = TRUE) |>
          grepl("Aberdeen|Watertown|Huron|Mitchell", district_name),
          subgroup == "total_enrollment", grade_level == "TOTAL") |>
   ggplot(aes(x = end_year, y = n_students, color = district_name)) +
+  geom_vline(xintercept = 2020, linetype = "dashed", color = "gray50", alpha = 0.7) +
   geom_line(linewidth = 1.2) +
   geom_point(size = 2) +
   scale_y_continuous(labels = scales::comma) +
@@ -800,8 +808,8 @@ ggplot(multi_trend, aes(x = end_year, y = n_students)) +
 
 South Dakota’s school enrollment data reveals:
 
-- **Steady growth**: Unlike many states, South Dakota enrollment remains
-  stable
+- **Post-peak decline**: Enrollment peaked at 141,429 in 2022 and is now
+  dropping
 - **Urban concentration**: Sioux Falls and Rapid City dominate
   enrollment
 - **Native American presence**: Significant Native American student
