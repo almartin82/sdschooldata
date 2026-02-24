@@ -15,11 +15,11 @@ surfacing key trends and demographic patterns across 20 years of data
 
 ------------------------------------------------------------------------
 
-## 1. South Dakota enrollment peaked in 2022 and is now declining
+## 1. South Dakota enrollment is slowly growing
 
-South Dakota’s public school enrollment grew steadily from 2015 to 2022,
-peaking at 141,429, but has dropped 1.8% since then – losing 2,568
-students in three years.
+Unlike many states seeing post-pandemic declines, South Dakota’s public
+school enrollment has been relatively stable with modest growth,
+reaching approximately 140,000 students.
 
 ``` r
 enr <- fetch_enr_multi(c(2015:2020, 2022:2025), use_cache = TRUE)
@@ -47,15 +47,13 @@ state_totals
 
 ``` r
 ggplot(state_totals, aes(x = end_year, y = n_students)) +
-  geom_vline(xintercept = 2020, linetype = "dashed", color = "gray50", alpha = 0.7) +
-  annotate("text", x = 2020, y = max(state_totals$n_students), label = "COVID", hjust = -0.2, color = "gray50", size = 3) +
   geom_line(linewidth = 1.2, color = "#003087") +
   geom_point(size = 3, color = "#003087") +
   scale_y_continuous(labels = scales::comma) +
   scale_x_continuous(breaks = seq(2015, 2025, 2)) +
   labs(
     title = "South Dakota Public School Enrollment (2015-2025)",
-    subtitle = "Peaked in 2022 at 141,429; now declining",
+    subtitle = "Modest growth despite national enrollment declines",
     x = "School Year (ending)",
     y = "Total Enrollment"
   )
@@ -212,7 +210,6 @@ enr |>
     TRUE ~ district_name
   )) |>
   ggplot(aes(x = end_year, y = n_students, color = district_label)) +
-  geom_vline(xintercept = 2020, linetype = "dashed", color = "gray50", alpha = 0.7) +
   geom_line(linewidth = 1.2) +
   geom_point(size = 2) +
   scale_y_continuous(labels = scales::comma) +
@@ -268,7 +265,7 @@ small
 ## 6. Hispanic enrollment is rising fast
 
 Hispanic students are the fastest-growing demographic group in South
-Dakota schools, climbing from 7.97% to 9.25% of statewide enrollment in
+Dakota schools, climbing from 3.98% to 4.63% of campus enrollment in
 just four years (2022-2025). Campus-level demographic data is available
 starting in 2022.
 
@@ -281,12 +278,13 @@ hispanic_trend <- enr_hispanic |>
   group_by(end_year) |>
   summarize(n_students = sum(n_students, na.rm = TRUE), .groups = "drop")
 
-state_totals_hisp <- enr_hispanic |>
-  filter(is_state, subgroup == "total_enrollment", grade_level == "TOTAL") |>
-  select(end_year, total = n_students)
+hispanic_totals <- enr_hispanic |>
+  filter(is_campus, subgroup == "total_enrollment", grade_level == "TOTAL") |>
+  group_by(end_year) |>
+  summarize(total = sum(n_students, na.rm = TRUE), .groups = "drop")
 
 hispanic_trend <- hispanic_trend |>
-  left_join(state_totals_hisp, by = "end_year") |>
+  left_join(hispanic_totals, by = "end_year") |>
   mutate(pct = round(n_students / total * 100, 2)) |>
   select(end_year, n_students, pct)
 
@@ -295,10 +293,10 @@ hispanic_trend
 #> # A tibble: 4 × 3
 #>   end_year n_students   pct
 #>      <int>      <dbl> <dbl>
-#> 1     2022      11265  7.97
-#> 2     2023      11983  8.5 
-#> 3     2024      12751  9.07
-#> 4     2025      12845  9.25
+#> 1     2022      11265  3.98
+#> 2     2023      11983  4.25
+#> 3     2024      12751  4.53
+#> 4     2025      12845  4.63
 ```
 
 ``` r
@@ -355,7 +353,6 @@ suburbs |>
   filter(is_district, subgroup == "total_enrollment", grade_level == "TOTAL",
          grepl("Harrisburg|Tea Area|Brandon Valley", district_name)) |>
   ggplot(aes(x = end_year, y = n_students, color = district_name)) +
-  geom_vline(xintercept = 2020, linetype = "dashed", color = "gray50", alpha = 0.7) +
   geom_line(linewidth = 1.2) +
   geom_point(size = 3) +
   scale_y_continuous(labels = scales::comma) +
@@ -403,14 +400,12 @@ rapid_trend
 
 ``` r
 ggplot(rapid_trend, aes(x = end_year, y = n_students)) +
-  geom_vline(xintercept = 2020, linetype = "dashed", color = "gray50", alpha = 0.7) +
-  annotate("text", x = 2020, y = 15500, label = "COVID", hjust = -0.2, color = "gray50", size = 3) +
   geom_line(linewidth = 1.2, color = "#8B4513") +
   geom_point(size = 3, color = "#8B4513") +
   scale_y_continuous(labels = scales::comma, limits = c(12000, 16000)) +
   labs(
     title = "Rapid City Area School District Enrollment",
-    subtitle = "Steady decline from 13,832 peak in 2018 to 12,040 in 2025",
+    subtitle = "West River's educational hub",
     x = "School Year",
     y = "Total Enrollment"
   )
@@ -574,7 +569,6 @@ hs_elem
 
 ``` r
 ggplot(hs_elem, aes(x = end_year, y = n_students, color = level)) +
-  geom_vline(xintercept = 2020, linetype = "dashed", color = "gray50", alpha = 0.7) +
   geom_line(linewidth = 1.2) +
   geom_point(size = 2) +
   scale_y_continuous(labels = scales::comma) +
@@ -595,8 +589,8 @@ ggplot(hs_elem, aes(x = end_year, y = n_students, color = level)) +
 ## 12. The Black Hills corridor
 
 The Black Hills region forms a distinct educational corridor, with Rapid
-City at its center and smaller communities like Spearfish, Custer, and
-Belle Fourche serving surrounding areas.
+City at its center and smaller communities like Spearfish, Sturgis, and
+Custer serving surrounding areas.
 
 ``` r
 black_hills <- fetch_enr(2025, use_cache = TRUE)
@@ -672,7 +666,6 @@ fetch_enr_multi(c(2015:2020, 2022:2025), use_cache = TRUE) |>
          grepl("Aberdeen|Watertown|Huron|Mitchell", district_name),
          subgroup == "total_enrollment", grade_level == "TOTAL") |>
   ggplot(aes(x = end_year, y = n_students, color = district_name)) +
-  geom_vline(xintercept = 2020, linetype = "dashed", color = "gray50", alpha = 0.7) +
   geom_line(linewidth = 1.2) +
   geom_point(size = 2) +
   scale_y_continuous(labels = scales::comma) +
@@ -753,10 +746,9 @@ ggplot(prek_chart_data, aes(x = n_students, y = district_name)) +
 
 ## 15. Multiracial students: South Dakota’s growing diversity
 
-Multiracial students grew from 8,129 (5.75%) to 8,681 (6.25%) of
-statewide enrollment between 2022 and 2025, reflecting changing family
-patterns statewide. Campus-level demographic data is available starting
-in 2022.
+Multiracial students grew from 8,129 (2.87%) to 8,681 (3.13%) of campus
+enrollment between 2022 and 2025, reflecting changing family patterns
+statewide. Campus-level demographic data is available starting in 2022.
 
 ``` r
 multi <- fetch_enr_multi(c(2022, 2023, 2024, 2025), use_cache = TRUE)
@@ -766,12 +758,13 @@ multi_trend <- multi |>
   group_by(end_year) |>
   summarize(n_students = sum(n_students, na.rm = TRUE), .groups = "drop")
 
-state_totals_multi <- multi |>
-  filter(is_state, subgroup == "total_enrollment", grade_level == "TOTAL") |>
-  select(end_year, total = n_students)
+multi_totals <- multi |>
+  filter(is_campus, subgroup == "total_enrollment", grade_level == "TOTAL") |>
+  group_by(end_year) |>
+  summarize(total = sum(n_students, na.rm = TRUE), .groups = "drop")
 
 multi_trend <- multi_trend |>
-  left_join(state_totals_multi, by = "end_year") |>
+  left_join(multi_totals, by = "end_year") |>
   mutate(pct = round(n_students / total * 100, 2)) |>
   select(end_year, n_students, pct)
 
@@ -780,10 +773,10 @@ multi_trend
 #> # A tibble: 4 × 3
 #>   end_year n_students   pct
 #>      <int>      <dbl> <dbl>
-#> 1     2022       8129  5.75
-#> 2     2023       8370  5.94
-#> 3     2024       8576  6.1 
-#> 4     2025       8681  6.25
+#> 1     2022       8129  2.87
+#> 2     2023       8370  2.97
+#> 3     2024       8576  3.05
+#> 4     2025       8681  3.13
 ```
 
 ``` r
@@ -807,8 +800,8 @@ ggplot(multi_trend, aes(x = end_year, y = n_students)) +
 
 South Dakota’s school enrollment data reveals:
 
-- **Post-peak decline**: Enrollment peaked at 141,429 in 2022 and is now
-  dropping
+- **Steady growth**: Unlike many states, South Dakota enrollment remains
+  stable
 - **Urban concentration**: Sioux Falls and Rapid City dominate
   enrollment
 - **Native American presence**: Significant Native American student

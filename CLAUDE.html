@@ -235,11 +235,11 @@ This section contains South Dakota-specific instructions and information.
 
 ## Data Availability
 
-**Available Years:** 2006-2025
+**Available Years:** 2021-2025
 
 **Data Source:** South Dakota Department of Education
-- URL: https://doe.sd.gov/ofm/enrollment.aspx
-- Files: Excel (.xls/.xlsx) enrollment files by school year
+- URL: [Add your state's URL here]
+- Files: [Add file descriptions here]
 
 ---
 
@@ -253,15 +253,8 @@ pip install -e ./pysdschooldata &amp;&amp; pytest tests/test_pysdschooldata.py -
 </div>
 <div class="section level2">
 <h2 id="known-data-issues">Known Data Issues<a class="anchor" aria-label="anchor" href="#known-data-issues"></a></h2>
-<ul><li>
-<strong>2021 data severely broken</strong>: Only 444 rows returned (vs ~15,000+ typical), state total 13,727 (vs ~140,000 expected). Excluded from all time series (use <code>c(2015:2020, 2022:2025)</code> instead of <code>2015:2025</code>).</li>
-<li>
-<strong>District names inconsistent across years</strong>: e.g., “Rapid City Area Schools 51-4” (2015), “Rapid City Area 51-4” (2016-2019, double space), “Rapid City Area 51-” (2020, truncated). Use <code>district_id</code> for cross-year comparisons.</li>
-<li>
-<strong>Demographics campus-level only</strong>: Race/ethnicity subgroups only available at <code>is_campus</code> level (2022+). Must aggregate with <code>group_by(subgroup) |&gt; summarize(sum(...))</code> for state/district totals.</li>
-<li>
-<strong>Gender data not available</strong>: Male/female data is from a separate campus-level file and may not be complete.</li>
-</ul></div>
+<p>[Add any state-specific data issues or quirks here]</p>
+</div>
 </div>
 
   </main><aside class="col-md-3"><nav id="toc" aria-label="Table of contents"><h2>On this page</h2>

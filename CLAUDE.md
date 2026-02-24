@@ -274,11 +274,11 @@ Chart
 
     ## Data Availability
 
-    **Available Years:** 2006-2025
+    **Available Years:** 2021-2025
 
     **Data Source:** South Dakota Department of Education
-    - URL: https://doe.sd.gov/ofm/enrollment.aspx
-    - Files: Excel (.xls/.xlsx) enrollment files by school year
+    - URL: [Add your state's URL here]
+    - Files: [Add file descriptions here]
 
     ---
 
@@ -293,15 +293,4 @@ Chart
 
 ## Known Data Issues
 
-- **2021 data severely broken**: Only 444 rows returned (vs ~15,000+
-  typical), state total 13,727 (vs ~140,000 expected). Excluded from all
-  time series (use `c(2015:2020, 2022:2025)` instead of `2015:2025`).
-- **District names inconsistent across years**: e.g., “Rapid City Area
-  Schools 51-4” (2015), “Rapid City Area 51-4” (2016-2019, double
-  space), “Rapid City Area 51-” (2020, truncated). Use `district_id` for
-  cross-year comparisons.
-- **Demographics campus-level only**: Race/ethnicity subgroups only
-  available at `is_campus` level (2022+). Must aggregate with
-  `group_by(subgroup) |> summarize(sum(...))` for state/district totals.
-- **Gender data not available**: Male/female data is from a separate
-  campus-level file and may not be complete.
+\[Add any state-specific data issues or quirks here\]
