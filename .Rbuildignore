@@ -13,3 +13,4 @@
 ^py.*schooldata$
 ^TODO\.md$
 ^vignettes/.*_cache$
+^DATA-CATEGORY-TAXONOMY\.md$
