@@ -144,7 +144,7 @@ urban_growth
 | **Enrollment** | 2006-2025 | `fetch_enr()` / `fetch_enr_multi()` | State, district, campus. Race, gender |
 | Assessments | -- | -- | Not yet available |
 | Graduation | -- | -- | Not yet available |
-| Directory | -- | -- | Not yet available |
+| **Directory** | Current | `fetch_directory()` | District, school. Superintendent, principal, address, phone |
 | Per-Pupil Spending | -- | -- | Not yet available |
 | Accountability | -- | -- | Not yet available |
 | Chronic Absence | -- | -- | Not yet available |
