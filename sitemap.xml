@@ -9,13 +9,18 @@
 <url><loc>https://almartin82.github.io/sdschooldata/authors.html</loc></url>
 <url><loc>https://almartin82.github.io/sdschooldata/index.html</loc></url>
 <url><loc>https://almartin82.github.io/sdschooldata/reference/add_gender_data.html</loc></url>
+<url><loc>https://almartin82.github.io/sdschooldata/reference/build_cache_path_directory.html</loc></url>
 <url><loc>https://almartin82.github.io/sdschooldata/reference/build_sd_url.html</loc></url>
 <url><loc>https://almartin82.github.io/sdschooldata/reference/cache_exists.html</loc></url>
+<url><loc>https://almartin82.github.io/sdschooldata/reference/cache_exists_directory.html</loc></url>
 <url><loc>https://almartin82.github.io/sdschooldata/reference/cache_status.html</loc></url>
 <url><loc>https://almartin82.github.io/sdschooldata/reference/clear_cache.html</loc></url>
+<url><loc>https://almartin82.github.io/sdschooldata/reference/clear_directory_cache.html</loc></url>
 <url><loc>https://almartin82.github.io/sdschooldata/reference/create_state_aggregate.html</loc></url>
+<url><loc>https://almartin82.github.io/sdschooldata/reference/download_directory_excel.html</loc></url>
 <url><loc>https://almartin82.github.io/sdschooldata/reference/download_sd_excel.html</loc></url>
 <url><loc>https://almartin82.github.io/sdschooldata/reference/enr_grade_aggs.html</loc></url>
+<url><loc>https://almartin82.github.io/sdschooldata/reference/fetch_directory.html</loc></url>
 <url><loc>https://almartin82.github.io/sdschooldata/reference/fetch_enr.html</loc></url>
 <url><loc>https://almartin82.github.io/sdschooldata/reference/fetch_enr_multi.html</loc></url>
 <url><loc>https://almartin82.github.io/sdschooldata/reference/get_available_years.html</loc></url>
@@ -25,6 +30,7 @@
 <url><loc>https://almartin82.github.io/sdschooldata/reference/get_gender_filename.html</loc></url>
 <url><loc>https://almartin82.github.io/sdschooldata/reference/get_grade_filename.html</loc></url>
 <url><loc>https://almartin82.github.io/sdschooldata/reference/get_race_filename.html</loc></url>
+<url><loc>https://almartin82.github.io/sdschooldata/reference/get_raw_directory.html</loc></url>
 <url><loc>https://almartin82.github.io/sdschooldata/reference/get_raw_enr.html</loc></url>
 <url><loc>https://almartin82.github.io/sdschooldata/reference/get_raw_enr_era0.html</loc></url>
 <url><loc>https://almartin82.github.io/sdschooldata/reference/get_raw_enr_era1.html</loc></url>
@@ -34,13 +40,16 @@
 <url><loc>https://almartin82.github.io/sdschooldata/reference/id_enr_aggs.html</loc></url>
 <url><loc>https://almartin82.github.io/sdschooldata/reference/index.html</loc></url>
 <url><loc>https://almartin82.github.io/sdschooldata/reference/process_campus_enr.html</loc></url>
+<url><loc>https://almartin82.github.io/sdschooldata/reference/process_directory.html</loc></url>
 <url><loc>https://almartin82.github.io/sdschooldata/reference/process_district_enr.html</loc></url>
 <url><loc>https://almartin82.github.io/sdschooldata/reference/process_enr.html</loc></url>
 <url><loc>https://almartin82.github.io/sdschooldata/reference/read_cache.html</loc></url>
+<url><loc>https://almartin82.github.io/sdschooldata/reference/read_cache_directory.html</loc></url>
 <url><loc>https://almartin82.github.io/sdschooldata/reference/read_xls_via_python.html</loc></url>
 <url><loc>https://almartin82.github.io/sdschooldata/reference/safe_numeric.html</loc></url>
 <url><loc>https://almartin82.github.io/sdschooldata/reference/sdschooldata-package.html</loc></url>
 <url><loc>https://almartin82.github.io/sdschooldata/reference/tidy_enr.html</loc></url>
 <url><loc>https://almartin82.github.io/sdschooldata/reference/write_cache.html</loc></url>
+<url><loc>https://almartin82.github.io/sdschooldata/reference/write_cache_directory.html</loc></url>
 </urlset>
 
