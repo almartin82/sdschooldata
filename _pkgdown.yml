@@ -15,10 +15,11 @@ navbar:
 
 reference:
 - title: "Fetch Data"
-  desc: "Functions to download enrollment data"
+  desc: "Functions to download enrollment and directory data"
   contents:
   - fetch_enr
   - fetch_enr_multi
+  - fetch_directory
   - get_available_years
 
 - title: "Transform Data"
@@ -33,6 +34,7 @@ reference:
   contents:
   - cache_status
   - clear_cache
+  - clear_directory_cache
 
 - title: "Utilities"
   desc: "Helper functions"
