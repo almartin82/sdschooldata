@@ -553,12 +553,12 @@ test_that("Sioux Falls is the largest district", {
   }
 })
 
-test_that("get_available_years includes 2025", {
+test_that("get_available_years includes 2026", {
   years <- get_available_years()
 
-  expect_true(2025 %in% years)
+  expect_true(2026 %in% years)
   expect_true(2006 %in% years)
-  expect_equal(years, 2006:2025)
+  expect_equal(years, 2006:2026)
 })
 
 # ==============================================================================

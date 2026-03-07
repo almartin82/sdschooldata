@@ -40,7 +40,7 @@ test_that("get_available_years returns expected range", {
   expect_true(2011 %in% years)
   expect_true(2025 %in% years)
   expect_false(2005 %in% years)  # 2005 and earlier only have PDF
-  expect_equal(years, 2006:2025)
+  expect_equal(years, 2006:2026)
 })
 
 test_that("build_sd_url constructs valid district URLs", {
@@ -90,6 +90,7 @@ test_that("get_district_filename handles all format eras", {
   expect_equal(get_district_filename(2022), "Pubdisgr-2022.xlsx")
   expect_equal(get_district_filename(2024), "Pubdisgr-2024.xlsx")
   expect_equal(get_district_filename(2025), "Pubdisgr-2025.xlsx")
+  expect_equal(get_district_filename(2026), "Pubdisgr-2025.xlsx")
 })
 
 test_that("get_district_filename errors on unsupported years", {

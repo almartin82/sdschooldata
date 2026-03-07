@@ -602,7 +602,7 @@ test_that("fetch_enr rejects year below range", {
 })
 
 test_that("fetch_enr rejects year above range", {
-  expect_error(fetch_enr(2026), "end_year must be between")
+  expect_error(fetch_enr(2027), "end_year must be between")
   expect_error(fetch_enr(2030), "end_year must be between")
   expect_error(fetch_enr(3000), "end_year must be between")
 })
@@ -865,14 +865,14 @@ test_that("race data only exists at campus level", {
 # SECTION 9: get_available_years()
 # ==============================================================================
 
-test_that("get_available_years returns 2006:2025", {
+test_that("get_available_years returns 2006:2026", {
   years <- get_available_years()
 
-  expect_equal(years, 2006:2025)
+  expect_equal(years, 2006:2026)
   expect_true(is.integer(years))
-  expect_equal(length(years), 20)
+  expect_equal(length(years), 21)
   expect_equal(min(years), 2006L)
-  expect_equal(max(years), 2025L)
+  expect_equal(max(years), 2026L)
 })
 
 # ==============================================================================
