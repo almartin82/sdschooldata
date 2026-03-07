@@ -51,7 +51,7 @@ get_available_years <- function() {
   # Years 2006: XLS format with full grade breakdown
   # Years 2000-2005: Only PDF files available (not supported)
   # Data source: https://doe.sd.gov/ofm/enrollment.aspx
-  2006:2025
+  2006:2026
 }
 
 
@@ -141,10 +141,13 @@ get_district_filename <- function(end_year) {
     return("Pubdisgr-2022.xlsx")
   } else if (end_year == 2023) {
     return("Pubdisgr-23.xlsx")  # Note: Uses 2-digit year
+  } else if (end_year == 2026) {
+    # SD DOE names files by fall census year (2025 for the 2025-26 school year)
+    return("Pubdisgr-2025.xlsx")
   } else if (end_year >= 2024) {
     return(paste0("Pubdisgr-", yyyy, ".xlsx"))
   } else {
-    stop("Year ", end_year, " not supported. Available years: 2006-2025")
+    stop("Year ", end_year, " not supported. Available years: 2006-2026")
   }
 }
 
@@ -190,6 +193,9 @@ get_race_filename <- function(end_year) {
     return("Pubschrce-2022.xlsx")
   } else if (end_year == 2023) {
     return("Pubschrce-23b.xlsx")  # Note: Uses 2-digit year with suffix
+  } else if (end_year == 2026) {
+    # SD DOE names files by fall census year (2025 for the 2025-26 school year)
+    return("Pubschrce-2025.xlsx")
   } else if (end_year >= 2024) {
     return(paste0("Pubschrce-", yyyy, ".xlsx"))
   } else {
@@ -241,6 +247,9 @@ get_gender_filename <- function(end_year) {
     return("Pubschgen-23.xlsx")   # Note: Uses 2-digit year
   } else if (end_year == 2024) {
     return("Pubschgen-24.xlsx")
+  } else if (end_year == 2026) {
+    # SD DOE names files by fall census year (2025 for the 2025-26 school year)
+    return("Pubschgen-2025.xlsx")
   } else if (end_year >= 2025) {
     return(paste0("Pubschgen-", yyyy, ".xlsx"))
   } else {
@@ -270,6 +279,9 @@ get_grade_filename <- function(end_year) {
     return("Pubschgr-19.xlsx")
   } else if (end_year == 2020) {
     return("Pubschgr-20f.xlsx")
+  } else if (end_year == 2026) {
+    # SD DOE names files by fall census year (2025 for the 2025-26 school year)
+    return("Pubschgr-2025.xlsx")
   } else if (end_year >= 2021) {
     return(paste0("Pubschgr-", yyyy, ".xlsx"))
   } else {

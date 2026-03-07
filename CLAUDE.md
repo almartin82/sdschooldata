@@ -249,7 +249,7 @@ This section contains South Dakota-specific instructions and information.
 
 ## Data Availability
 
-**Available Years:** 2021-2025
+**Available Years:** 2006-2026
 
 **Data Source:** South Dakota Department of Education
 - URL: [Add your state's URL here]
